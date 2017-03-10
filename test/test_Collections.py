@@ -131,7 +131,7 @@ class Test_CollectionsListBase(unittest.TestCase):
     def createTestList(self):
         """creates the test list for this test case
         """
-        return range(9)
+        return list(range(9))
 
     def setUp(self):
         self.testList = self.createTestList()
@@ -236,7 +236,7 @@ class Test_CollectionsListBase(unittest.TestCase):
 class Test_CollectionsStringList(Test_CollectionsListBase):
 
     def createTestList(self):
-        return [u'a', u'b', u'c']
+        return ['a', 'b', 'c']
 
 
 class Test_CollectionsFloatList(Test_CollectionsListBase):

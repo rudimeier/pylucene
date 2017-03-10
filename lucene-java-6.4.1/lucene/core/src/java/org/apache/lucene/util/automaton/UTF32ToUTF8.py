@@ -66,8 +66,8 @@ class FSA:
     Adds edge from n1-n2, utf8 byte range v1-v2.
     """
     assert n1 in self.states
-    assert type(v1) is types.IntType
-    assert type(v2) is types.IntType
+    assert type(v1) is int
+    assert type(v2) is int
     self.states[n1].append((label, v1, v2, n2))
 
   def addNode(self, label=None):
@@ -81,7 +81,7 @@ class FSA:
     __l = []
     w = __l.append
     endNode = startNode = None
-    for id, details in self.states.items():
+    for id, details in list(self.states.items()):
       name = details[0]
       if name == 'end':
         endNode = id
@@ -99,7 +99,7 @@ class FSA:
 
     w('  N%s [label="%s"];' % (startNode, startNode))
     w('  Ns -> N%s;' % startNode)
-    for id, details in self.states.items():
+    for id, details in list(self.states.items()):
       edges = details[1:]
       w('  N%s [label="%s"];' % (id, id))
       for type, s, e, dest in edges:
@@ -274,36 +274,36 @@ def build(fsa,
 def main():
 
   if len(sys.argv) not in (3, 4):
-    print
-    print 'Usage: python %s startUTF32 endUTF32 [testCode]' % sys.argv[0]
-    print
+    print()
+    print('Usage: python %s startUTF32 endUTF32 [testCode]' % sys.argv[0])
+    print()
     sys.exit(1)
 
   utf32Start = int(sys.argv[1])
   utf32End = int(sys.argv[2])
 
   if utf32Start > utf32End:
-    print 'ERROR: start must be <= end'
+    print('ERROR: start must be <= end')
     sys.exit(1)
 
   fsa = FSA()
   fsa.start = fsa.addNode('start')
   fsa.end = fsa.addNode('end')
 
-  print 's=%s' % ' '.join([binary(x[0]) for x in toUTF8(utf32Start)])
-  print 'e=%s' % ' '.join([binary(x[0]) for x in toUTF8(utf32End)])
+  print('s=%s' % ' '.join([binary(x[0]) for x in toUTF8(utf32Start)]))
+  print('e=%s' % ' '.join([binary(x[0]) for x in toUTF8(utf32End)]))
 
   if len(sys.argv) == 4:
-    print 't=%s [%s]' % \
+    print('t=%s [%s]' % \
           (' '.join([binary(x[0]) for x in toUTF8(int(sys.argv[3]))]),
-           ' '.join(['%2x' % x[0] for x in toUTF8(int(sys.argv[3]))]))
+           ' '.join(['%2x' % x[0] for x in toUTF8(int(sys.argv[3]))])))
   
   build(fsa, fsa.start, fsa.end,
         toUTF8(utf32Start),
         toUTF8(utf32End))
 
   fsa.toPNG('test', '/tmp/outpy.png')
-  print 'Saved to /tmp/outpy.png...'
+  print('Saved to /tmp/outpy.png...')
 
   test(fsa, utf32Start, utf32End, 100000);
 
@@ -314,7 +314,7 @@ def test(fsa, utf32Start, utf32End, count):
     r = random.randint(utf32Start, utf32End)
     dest = fsa.run([tup[0] for tup in toUTF8(r)])
     if dest != fsa.end:
-      print 'FAILED: valid %s (%s) is not accepted' % (r, ' '.join([binary(x[0]) for x in toUTF8(r)]))
+      print('FAILED: valid %s (%s) is not accepted' % (r, ' '.join([binary(x[0]) for x in toUTF8(r)])))
       return False
 
   invalidRange = MAX_UNICODE - (utf32End - utf32Start + 1)
@@ -326,19 +326,19 @@ def test(fsa, utf32Start, utf32End, count):
         r = utf32End + 1 + r - utf32Start
       dest = fsa.run([tup[0] for tup in toUTF8(r)])
       if dest != -1:
-        print 'FAILED: invalid %s (%s) is accepted' % (r, ' '.join([binary(x[0]) for x in toUTF8(r)]))
+        print('FAILED: invalid %s (%s) is accepted' % (r, ' '.join([binary(x[0]) for x in toUTF8(r)])))
         return False
 
   return True
 
 def stress():
 
-  print 'Testing...'
+  print('Testing...')
 
   iter = 0
   while True:
     if iter % 10 == 0:
-      print '%s...' % iter
+      print('%s...' % iter)
     iter += 1
 
     v1 = random.randint(0, MAX_UNICODE)
@@ -357,7 +357,7 @@ def stress():
           toUTF8(utf32End))
 
     if not test(fsa, utf32Start, utf32End, 10000):
-      print 'FAILED on utf32Start=%s utf32End=%s' % (utf32Start, utf32End)
+      print('FAILED on utf32Start=%s utf32End=%s' % (utf32Start, utf32End))
 
 if __name__ == '__main__':
   if len(sys.argv) > 1:

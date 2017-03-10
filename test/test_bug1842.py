@@ -59,8 +59,8 @@ class Test_Bug1842(PyLuceneTestCase):
             terms.append(term.utf8ToString())
             freqs.append(termsEnum.totalTermFreq())
         terms.sort()
-        self.assert_(terms == ['blah', 'gesundheit'])
-        self.assert_(freqs == [3, 1])
+        self.assertTrue(terms == ['blah', 'gesundheit'])
+        self.assertTrue(freqs == [3, 1])
 
 if __name__ == '__main__':
     lucene.initVM(vmargs=['-Djava.awt.headless=true'])

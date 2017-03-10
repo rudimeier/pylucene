@@ -35,7 +35,7 @@ iwriter.commit()
 iwriter.close()
 ireader = DirectoryReader.open(directory)
 
-for doc in xrange(0, len(ts)):
+for doc in range(0, len(ts)):
     tv = ireader.getTermVector(doc, "fieldname")
     termsEnum = tv.iterator()
 
@@ -44,10 +44,10 @@ for doc in xrange(0, len(ts)):
         dpEnum.nextDoc()  # prime the enum which works only for the current doc
         freq = dpEnum.freq()
 
-        print 'term:', term.utf8ToString()
-        print '  freq:', freq
+        print('term:', term.utf8ToString())
+        print('  freq:', freq)
 
-        for i in xrange(freq):
-            print "  pos:", dpEnum.nextPosition()
-            print "  off: %i-%i" %(dpEnum.startOffset(), dpEnum.endOffset())
-    print
+        for i in range(freq):
+            print("  pos:", dpEnum.nextPosition())
+            print("  off: %i-%i" %(dpEnum.startOffset(), dpEnum.endOffset()))
+    print()

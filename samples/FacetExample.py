@@ -126,7 +126,7 @@ class SimpleIndexer(object):
         # now safely in the provided directories: indexDir and taxoDir.
         iw.close()
         taxo.close()
-        print "Indexed %d documents with facets." % nDocsAdded
+        print("Indexed %d documents with facets." % nDocsAdded)
 
     index = classmethod(index)
 
@@ -169,23 +169,23 @@ class SimpleSearcher(object):
         facet_result = facets.getTopChildren(10, "Categories")
         if facet_result:
             results.append(facet_result)
-            print  "Categories: ", facet_result.childCount
+            print("Categories: ", facet_result.childCount)
             for  lv in facet_result.labelValues:
-                print " '%s' (%s)"  % (lv.label, lv.value)
+                print(" '%s' (%s)"  % (lv.label, lv.value))
 
         facet_result = facets.getTopChildren(10, "Categories", "root", "a")
         if facet_result:
             results.append(facet_result)
-            print  "Root-a-Categories: ", facet_result.childCount
+            print("Root-a-Categories: ", facet_result.childCount)
             for  lv in facet_result.labelValues:
-                print " '%s' (%s)"  % (lv.label, lv.value)
+                print(" '%s' (%s)"  % (lv.label, lv.value))
 
         facet_result = facets.getTopChildren(10, "Author")
         if facet_result:
             results.append(facet_result)
-            print  "Author: ", facet_result.childCount
+            print("Author: ", facet_result.childCount)
             for  lv in facet_result.labelValues:
-                print " '%s' (%s)"  % (lv.label, lv.value)
+                print(" '%s' (%s)"  % (lv.label, lv.value))
 
         return results
 
@@ -205,9 +205,9 @@ class SimpleSearcher(object):
         # Retrieve results
         facets =  FastTaxonomyFacetCounts(taxoReader, facets_config, facets_collector)
         facet_result = facets.getTopChildren(10, "Author")
-        print  "Author: ", facet_result.childCount
+        print("Author: ", facet_result.childCount)
         for  lv in facet_result.labelValues:
-            print " '%s' (%s)"  % (lv.label, lv.value)
+            print(" '%s' (%s)"  % (lv.label, lv.value))
 
         return facet_result
 
@@ -248,10 +248,10 @@ class FacetExample(object):
         indexReader = DirectoryReader.open(self.indexDir)
 
         for term in searchValues:
-            print  "\nsearch by term '%s' ..." % term
+            print("\nsearch by term '%s' ..." % term)
             facetRes = SimpleSearcher.searchWithTerm(term, indexReader, taxo,
                                                        self.facets_config)
-        print  "\nsearch all documents  ..."
+        print("\nsearch all documents  ...")
         facetRes = SimpleSearcher.searchWithFacets(indexReader, taxo,
                                                    self.facets_config)
         # close readers
@@ -266,7 +266,7 @@ class FacetExample(object):
         indexReader = DirectoryReader.open(self.indexDir)
 
         for drilldown in drilldownCategories:
-            print "search with drilldown: %s" %  '/'.join(drilldown)
+            print("search with drilldown: %s" %  '/'.join(drilldown))
             facetRes = SimpleSearcher.searchWithDrillDown(drilldown, indexReader,
                                                           taxo, self.facets_config)
         # close readers

@@ -38,14 +38,14 @@ class PerFieldAnalyzerTestCase(PyLuceneTestCase):
         tokenStream.reset()
         termAtt = tokenStream.getAttribute(CharTermAttribute.class_)
 
-        self.assert_(tokenStream.incrementToken())
+        self.assertTrue(tokenStream.incrementToken())
         self.assertEqual("Qwerty", termAtt.toString(),
                          "WhitespaceAnalyzer does not lowercase")
 
         tokenStream = analyzer.tokenStream("special", StringReader(text))
         tokenStream.reset()
         termAtt = tokenStream.getAttribute(CharTermAttribute.class_)
-        self.assert_(tokenStream.incrementToken())
+        self.assertTrue(tokenStream.incrementToken())
         self.assertEqual("qwerty", termAtt.toString(),
                          "SimpleAnalyzer lowercases")
 

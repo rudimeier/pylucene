@@ -49,7 +49,7 @@ class TestBooleanQuery(PyLuceneTestCase):
         b2.add(nested2, BooleanClause.Occur.SHOULD)
         bq2 = b2.build()
 
-        self.assert_(bq1.equals(bq2))
+        self.assertTrue(bq1.equals(bq2))
 
 
 if __name__ == "__main__":

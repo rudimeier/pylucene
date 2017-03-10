@@ -136,7 +136,7 @@ class Test_PyLuceneBase(object):
             # using a unicode body cause problems, which seems very odd
             # since the python type is the same regardless affter doing
             # the encode
-            body_text = u"hello world"*20
+            body_text = "hello world"*20
             body_reader = StringReader(body_text)
             doc.add(Field("content", body_reader, TextField.TYPE_NOT_STORED))
 
@@ -173,7 +173,7 @@ class Test_PyLuceneBase(object):
                                                 [SHOULD, SHOULD],
                                                 self.getAnalyzer())
             topDocs = searcher.search(query, 50)
-            self.assertEquals(1, topDocs.totalHits)
+            self.assertEqual(1, topDocs.totalHits)
         finally:
             self.closeStore(store)
         
@@ -285,16 +285,16 @@ class Test_PyLuceneBase(object):
             reader = DirectoryReader.open(store)
             fieldInfos = MultiFields.getMergedFieldInfos(reader)
             for fieldInfo in fieldInfos.iterator():
-                self.assert_(fieldInfo.name in ['owner', 'search_name',
+                self.assertTrue(fieldInfo.name in ['owner', 'search_name',
                                                 'meta_words', 'docid', 'title'])
 
                 if fieldInfo.getIndexOptions() != IndexOptions.NONE:
-                    self.assert_(fieldInfo.name in ['owner', 'meta_words',
+                    self.assertTrue(fieldInfo.name in ['owner', 'meta_words',
                                                     'docid', 'title'])
 
                 if (fieldInfo.getIndexOptions() != IndexOptions.NONE and
                     not fieldInfo.hasVectors()):
-                    self.assert_(fieldInfo.name in ['owner', 'meta_words',
+                    self.assertTrue(fieldInfo.name in ['owner', 'meta_words',
                                                     'docid', 'title'])
         finally:
             store = self.closeStore(store, reader)
@@ -314,7 +314,7 @@ class Test_PyLuceneWithFSStore(unittest.TestCase, Test_PyLuceneBase):
         if os.path.exists(self.STORE_DIR):
             try:
                 shutil.rmtree(self.STORE_DIR)
-            except Exception, e:
+            except Exception as e:
                 # maybe leaking file handles in closing stores
                 # does not affect other tests
                 if e.__name__ == 'WindowsError':

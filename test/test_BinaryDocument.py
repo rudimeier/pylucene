@@ -52,7 +52,7 @@ class TestBinaryDocument(PyLuceneTestCase):
         # open a reader and fetch the document
         reader = self.getReader()
         docFromReader = reader.document(0)
-        self.assert_(docFromReader is not None)
+        self.assertTrue(docFromReader is not None)
 
         # fetch the binary stored field and compare it's content with the
         # original one
@@ -85,7 +85,7 @@ class TestBinaryDocument(PyLuceneTestCase):
         # open a reader and fetch the document
         reader = self.getReader()
         docFromReader = reader.document(0)
-        self.assert_(docFromReader is not None)
+        self.assertTrue(docFromReader is not None)
 
         # fetch the binary compressed field and compare it's content with
         # the original one

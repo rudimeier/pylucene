@@ -26,10 +26,10 @@ from org.apache.lucene.analysis.standard import StandardAnalyzer
 
 if __name__ == '__main__':
     if len(sys.argv) < 2:
-        print IndexFiles.__doc__
+        print(IndexFiles.__doc__)
         sys.exit(1)
     env=lucene.initVM(vmargs=['-Djava.awt.headless=true'])
-    print 'lucene', lucene.VERSION
+    print('lucene', lucene.VERSION)
 
     def fn():
         base_dir = os.path.dirname(os.path.abspath(sys.argv[0]))
@@ -38,6 +38,6 @@ if __name__ == '__main__':
         IndexFiles(sys.argv[1], os.path.join(base_dir, INDEX_DIR),
                    StandardAnalyzer())
         end = datetime.now()
-        print end - start
+        print(end - start)
 
     threading.Thread(target=fn).start()

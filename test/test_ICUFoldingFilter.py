@@ -18,7 +18,7 @@
 
 try:
     from icu import Normalizer2, UNormalizationMode2
-except ImportError, e:
+except ImportError as e:
     pass
 
 import sys, lucene, unittest
@@ -49,32 +49,32 @@ class TestICUFoldingFilter(BaseTokenStreamTestCase):
                                [ "this", "is", "a", "test" ])
 
         # case folding
-        self._assertAnalyzesTo(a, u"Ruß", [ "russ" ])
+        self._assertAnalyzesTo(a, "Ruß", [ "russ" ])
 
         # case folding with accent removal
-        self._assertAnalyzesTo(a, u"ΜΆΪΟΣ", [ u"μαιοσ" ])
-        self._assertAnalyzesTo(a, u"Μάϊος", [ u"μαιοσ" ])
+        self._assertAnalyzesTo(a, "ΜΆΪΟΣ", [ "μαιοσ" ])
+        self._assertAnalyzesTo(a, "Μάϊος", [ "μαιοσ" ])
 
         # supplementary case folding
-        self._assertAnalyzesTo(a, u"𐐖", [ u"𐐾" ])
+        self._assertAnalyzesTo(a, "𐐖", [ "𐐾" ])
 
         # normalization
-        self._assertAnalyzesTo(a, u"ﴳﴺﰧ", [ u"طمطمطم" ])
+        self._assertAnalyzesTo(a, "ﴳﴺﰧ", [ "طمطمطم" ])
 
         # removal of default ignorables
-        self._assertAnalyzesTo(a, u"क्‍ष", [ u"कष" ])
+        self._assertAnalyzesTo(a, "क्‍ष", [ "कष" ])
 
         # removal of latin accents (composed)
-        self._assertAnalyzesTo(a, u"résumé", [ "resume" ])
+        self._assertAnalyzesTo(a, "résumé", [ "resume" ])
 
         # removal of latin accents (decomposed)
-        self._assertAnalyzesTo(a, u"re\u0301sume\u0301", [ u"resume" ])
+        self._assertAnalyzesTo(a, "re\u0301sume\u0301", [ "resume" ])
 
         # fold native digits
-        self._assertAnalyzesTo(a, u"৭০৬", [ "706" ])
+        self._assertAnalyzesTo(a, "৭০৬", [ "706" ])
 
         # ascii-folding-filter type stuff
-        self._assertAnalyzesTo(a, u"đis is cræzy", [ "dis", "is", "craezy" ])
+        self._assertAnalyzesTo(a, "đis is cræzy", [ "dis", "is", "craezy" ])
 
 
 if __name__ == "__main__":
@@ -95,4 +95,4 @@ if __name__ == "__main__":
             else:
                  unittest.main()
         else:
-            print >>sys.stderr, "ICU version >= 49 is required, running:", icu.ICU_VERSION
+            print("ICU version >= 49 is required, running:", icu.ICU_VERSION, file=sys.stderr)

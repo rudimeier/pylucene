@@ -25,17 +25,17 @@ class ThaiAnalyzerTestCase(BaseTokenStreamTestCase):
 
     def testOffsets(self):
         self._assertAnalyzesTo(ThaiAnalyzer(CharArraySet.EMPTY_SET),
-                               u"การที่ได้ต้องแสดงว่างานดี",
-                               [ u"การ", u"ที่", u"ได้", u"ต้อง", u"แสดง",
-                                 u"ว่า", u"งาน", u"ดี" ],
+                               "การที่ได้ต้องแสดงว่างานดี",
+                               [ "การ", "ที่", "ได้", "ต้อง", "แสดง",
+                                 "ว่า", "งาน", "ดี" ],
                                [ 0, 3, 6, 9, 13, 17, 20, 23 ],
                                [ 3, 6, 9, 13, 17, 20, 23, 25 ])
 
 
     def testStopWords(self):
         analyzer = ThaiAnalyzer()
-        self._assertAnalyzesTo(analyzer, u"การที่ได้ต้องแสดงว่างานดี",
-                               [ u"แสดง", u"งาน", u"ดี" ],
+        self._assertAnalyzesTo(analyzer, "การที่ได้ต้องแสดงว่างานดี",
+                               [ "แสดง", "งาน", "ดี" ],
                                [ 13, 20, 23 ],
                                [ 17, 23, 25 ],
                                [ 5, 2, 1 ])
@@ -44,16 +44,16 @@ class ThaiAnalyzerTestCase(BaseTokenStreamTestCase):
     def testPositionIncrements(self):
         analyzer = ThaiAnalyzer(StopAnalyzer.ENGLISH_STOP_WORDS_SET)
         self._assertAnalyzesTo(
-            analyzer, u"การที่ได้ต้อง the แสดงว่างานดี",
-            [ u"การ", u"ที่", u"ได้", u"ต้อง", u"แสดง", u"ว่า", u"งาน", u"ดี" ],
+            analyzer, "การที่ได้ต้อง the แสดงว่างานดี",
+            [ "การ", "ที่", "ได้", "ต้อง", "แสดง", "ว่า", "งาน", "ดี" ],
             [ 0, 3, 6, 9, 18, 22, 25, 28 ],
             [ 3, 6, 9, 13, 22, 25, 28, 30 ],
             [ 1, 1, 1, 1, 2, 1, 1, 1 ])
 
         # case that a stopword is adjacent to thai text, with no whitespace
         self._assertAnalyzesTo(
-            analyzer, u"การที่ได้ต้องthe แสดงว่างานดี",
-            [ u"การ", u"ที่", u"ได้", u"ต้อง", u"แสดง", u"ว่า", u"งาน", u"ดี" ],
+            analyzer, "การที่ได้ต้องthe แสดงว่างานดี",
+            [ "การ", "ที่", "ได้", "ต้อง", "แสดง", "ว่า", "งาน", "ดี" ],
             [ 0, 3, 6, 9, 17, 21, 24, 27 ],
             [ 3, 6, 9, 13, 21, 24, 27, 29 ],
             [ 1, 1, 1, 1, 2, 1, 1, 1 ])

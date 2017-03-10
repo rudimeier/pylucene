@@ -56,14 +56,14 @@ class PorterStemmerAnalyzer(PythonAnalyzer):
 
 if __name__ == '__main__':
     if len(sys.argv) < 2:
-        print IndexFiles.__doc__
+        print(IndexFiles.__doc__)
         sys.exit(1)
     lucene.initVM(vmargs=['-Djava.awt.headless=true'])
-    print 'lucene', lucene.VERSION
+    print('lucene', lucene.VERSION)
     start = datetime.now()
     try:
         IndexFiles(sys.argv[1], "index", PorterStemmerAnalyzer())
         end = datetime.now()
-        print end - start
-    except Exception, e:
-        print "Failed: ", e
+        print(end - start)
+    except Exception as e:
+        print("Failed: ", e)

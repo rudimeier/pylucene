@@ -36,7 +36,7 @@ class StopWordsTestCase(unittest.TestCase):
             result = StandardTokenizer()
             result.setReader(self.reader)
             result = StopFilter(result, self.stop_set)
-        except Exception, e:
+        except Exception as e:
             self.fail(str(e))
 
 

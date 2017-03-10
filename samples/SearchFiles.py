@@ -22,26 +22,26 @@ some cases.
 """
 def run(searcher, analyzer):
     while True:
-        print
-        print "Hit enter with no input to quit."
-        command = raw_input("Query:")
+        print()
+        print("Hit enter with no input to quit.")
+        command = input("Query:")
         if command == '':
             return
 
-        print
-        print "Searching for:", command
+        print()
+        print("Searching for:", command)
         query = QueryParser("contents", analyzer).parse(command)
         scoreDocs = searcher.search(query, 50).scoreDocs
-        print "%s total matching documents." % len(scoreDocs)
+        print("%s total matching documents." % len(scoreDocs))
 
         for scoreDoc in scoreDocs:
             doc = searcher.doc(scoreDoc.doc)
-            print 'path:', doc.get("path"), 'name:', doc.get("name")
+            print('path:', doc.get("path"), 'name:', doc.get("name"))
 
 
 if __name__ == '__main__':
     lucene.initVM(vmargs=['-Djava.awt.headless=true'])
-    print 'lucene', lucene.VERSION
+    print('lucene', lucene.VERSION)
     base_dir = os.path.dirname(os.path.abspath(sys.argv[0]))
     directory = SimpleFSDirectory(Paths.get(os.path.join(base_dir, INDEX_DIR)))
     searcher = IndexSearcher(DirectoryReader.open(directory))

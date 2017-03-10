@@ -191,7 +191,7 @@ class PositionIncrementTestCase(PyLuceneTestCase):
         tp = reader.postings(Term("content", "a"), PostingsEnum.ALL)
 
         count = 0
-        self.assert_(tp.nextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+        self.assertTrue(tp.nextDoc() != DocIdSetIterator.NO_MORE_DOCS);
 
         # "a" occurs 4 times
         self.assertEqual(4, tp.freq())
@@ -225,8 +225,8 @@ class PositionIncrementTestCase(PyLuceneTestCase):
                 for payload in collector.payloads:
                     count += 1
 
-        self.assert_(sawZero)
-        self.assertEquals(8, count)
+        self.assertTrue(sawZero)
+        self.assertEqual(8, count)
 
         spans = snq.createWeight(searcher, False).getSpans(
             searcher.getIndexReader().leaves().get(0),
@@ -239,8 +239,8 @@ class PositionIncrementTestCase(PyLuceneTestCase):
                 count += 1
                 sawZero = sawZero or spans.startPosition() == 0
 
-        self.assertEquals(4, count)
-        self.assert_(sawZero)
+        self.assertEqual(4, count)
+        self.assertTrue(sawZero)
 
 
 class PayloadSpanCollector(PythonSpanCollector):

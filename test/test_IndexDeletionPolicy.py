@@ -60,14 +60,14 @@ class IndexDeletionPolicyTestCase(PyLuceneTestCase):
         self.assertTrue(self.policy.onCommitCalled)
 
         # external IR sees 1 commit:
-        self.assertEquals(1, DirectoryReader.listCommits(self.directory).size())
+        self.assertEqual(1, DirectoryReader.listCommits(self.directory).size())
 
         # commit again:
         writer.addDocument(doc)
         writer.commit()
 
         # external IR sees 2 commits:
-        self.assertEquals(2, DirectoryReader.listCommits(self.directory).size())
+        self.assertEqual(2, DirectoryReader.listCommits(self.directory).size())
 
         writer.close()
 
@@ -76,11 +76,11 @@ class IndexDeletionPolicyTestCase(PyLuceneTestCase):
 
         self.assertTrue(self.policy.onInitCalled)
         self.assertFalse(self.policy.onCommitCalled)
-        self.assertEquals(2, DirectoryReader.listCommits(self.directory).size())
+        self.assertEqual(2, DirectoryReader.listCommits(self.directory).size())
         writer.close()
 
         # 3 from closing writer again
-        self.assertEquals(3, DirectoryReader.listCommits(self.directory).size())
+        self.assertEqual(3, DirectoryReader.listCommits(self.directory).size())
 
 if __name__ == "__main__":
     lucene.initVM()

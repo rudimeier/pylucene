@@ -49,12 +49,12 @@ class IndexFiles(object):
 
         self.indexDocs(root, writer)
         ticker = Ticker()
-        print 'commit index',
+        print('commit index', end=' ')
         threading.Thread(target=ticker.run).start()
         writer.commit()
         writer.close()
         ticker.tick = False
-        print 'done'
+        print('done')
 
     def indexDocs(self, root, writer):
 
@@ -72,11 +72,11 @@ class IndexFiles(object):
             for filename in filenames:
                 if not filename.endswith('.txt'):
                     continue
-                print "adding", filename
+                print("adding", filename)
                 try:
                     path = os.path.join(root, filename)
                     file = open(path)
-                    contents = unicode(file.read(), 'iso-8859-1')
+                    contents = str(file.read(), 'iso-8859-1')
                     file.close()
                     doc = Document()
                     doc.add(Field("name", filename, t1))
@@ -84,24 +84,24 @@ class IndexFiles(object):
                     if len(contents) > 0:
                         doc.add(Field("contents", contents, t2))
                     else:
-                        print "warning: no content in %s" % filename
+                        print("warning: no content in %s" % filename)
                     writer.addDocument(doc)
-                except Exception, e:
-                    print "Failed in indexDocs:", e
+                except Exception as e:
+                    print("Failed in indexDocs:", e)
 
 if __name__ == '__main__':
     if len(sys.argv) < 2:
-        print IndexFiles.__doc__
+        print(IndexFiles.__doc__)
         sys.exit(1)
     lucene.initVM(vmargs=['-Djava.awt.headless=true'])
-    print 'lucene', lucene.VERSION
+    print('lucene', lucene.VERSION)
     start = datetime.now()
     try:
         base_dir = os.path.dirname(os.path.abspath(sys.argv[0]))
         IndexFiles(sys.argv[1], os.path.join(base_dir, INDEX_DIR),
                    StandardAnalyzer())
         end = datetime.now()
-        print end - start
-    except Exception, e:
-        print "Failed: ", e
+        print(end - start)
+    except Exception as e:
+        print("Failed: ", e)
         raise e
