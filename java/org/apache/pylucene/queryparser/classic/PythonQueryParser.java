@@ -22,16 +22,15 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.queryparser.classic.CharStream;
 import org.apache.lucene.queryparser.classic.ParseException;
-import org.apache.lucene.util.Version;
 
 
 public class PythonQueryParser extends QueryParser {
 
     private long pythonObject;
 
-    public PythonQueryParser(Version version, String field, Analyzer analyzer)
+    public PythonQueryParser(String field, Analyzer analyzer)
     {
-        super(version, field, analyzer);
+        super(field, analyzer);
     }
 
     public PythonQueryParser(CharStream stream)
@@ -55,14 +54,24 @@ public class PythonQueryParser extends QueryParser {
     }
 
     public native void pythonDecRef();
-    public native Query getBooleanQuery(List clauses, boolean disableCoord);
+
+    @Override
+    public native Query getBooleanQuery(List clauses);
+
+    @Override
     public native Query getFuzzyQuery(String field, String termText,
                                       float minSimilarity);
+
+    @Override
     public native Query getPrefixQuery(String field, String termText);
+
+    @Override
     public native Query getRangeQuery(String field,
                                       String part1, String part2,
                                       boolean startInclusive,
                                       boolean endInclusive);
+
+    @Override
     public native Query getWildcardQuery(String field, String termText);
 
     public native Query getFieldQuery_quoted(String field, String queryText,

@@ -16,6 +16,7 @@
 package org.apache.pylucene.util;
 
 import org.apache.lucene.util.AttributeImpl;
+import org.apache.lucene.util.AttributeReflector;
 
 public class PythonAttributeImpl extends AttributeImpl {
     private long pythonObject;
@@ -40,9 +41,16 @@ public class PythonAttributeImpl extends AttributeImpl {
     }
 
     public native void pythonDecRef();
-    public native void clear();
-    public native void copyTo(AttributeImpl target);
 
+    @Override
+    public native void clear();
+    @Override
+    public native void copyTo(AttributeImpl target);
+    @Override
+    public native void reflectWith(AttributeReflector reflector);
+
+    @Override
     public native boolean equals(Object obj);
+    @Override
     public native int hashCode();
 }

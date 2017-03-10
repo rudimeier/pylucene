@@ -1,3 +1,14 @@
+Version 6.2.0 -> 6.4.1
+----------------------
+ - using Lucene 6.4.1 sources
+ - added explicit wrapper for org.apache.lucene.analysis.Tokenizer:input
+ - PyLucene built with JCC 2.23
+
+Version 4.10.1 -> 6.2.0
+-----------------------
+ - using Lucene 6.2.0 sources
+ - PyLucene built with JCC 2.22
+
 Version 4.9.0 -> 4.10.1
 -----------------------
  - using Lucene 4.10.1 sources

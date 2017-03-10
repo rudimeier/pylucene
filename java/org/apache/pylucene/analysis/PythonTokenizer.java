@@ -18,16 +18,15 @@ package org.apache.pylucene.analysis;
 import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.Token;
 import java.io.IOException;
-import java.io.Reader;
 
 
 public class PythonTokenizer extends Tokenizer {
 
     private long pythonObject;
 
-    public PythonTokenizer(Reader reader)
+    public PythonTokenizer()
     {
-        super(reader);
+        super();
     }
 
     public void pythonExtension(long pythonObject)
@@ -47,6 +46,7 @@ public class PythonTokenizer extends Tokenizer {
 
     public native void pythonDecRef();
 
+    @Override
     public native boolean incrementToken()
         throws IOException;
 }

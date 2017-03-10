@@ -31,7 +31,6 @@ class PyLuceneTestCase(TestCase):
 
     def __init__(self, *args):
         super(PyLuceneTestCase, self).__init__(*args)
-        self.TEST_VERSION = Version.LUCENE_CURRENT
 
     def setUp(self):
         self.directory = RAMDirectory()
@@ -40,12 +39,12 @@ class PyLuceneTestCase(TestCase):
         self.directory.close()
 
     def getConfig(self, analyzer=None):
-        return IndexWriterConfig(self.TEST_VERSION, analyzer)
-        
+        return IndexWriterConfig(analyzer)
+
     def getWriter(self, directory=None, analyzer=None, open_mode=None,
                   similarity=None, maxBufferedDocs=None, mergePolicy=None):
         if analyzer is None:
-            analyzer = LimitTokenCountAnalyzer(WhitespaceAnalyzer(self.TEST_VERSION), 10000)
+            analyzer = LimitTokenCountAnalyzer(WhitespaceAnalyzer(), 10000)
         config = self.getConfig(analyzer)
 
         if open_mode is None:
@@ -62,13 +61,20 @@ class PyLuceneTestCase(TestCase):
             directory = self.directory
 
         return IndexWriter(directory, config)
-        
+
     def getSearcher(self, directory=None, reader=None):
         if reader is not None:
             return IndexSearcher(reader)
         return IndexSearcher(self.getReader(directory=directory))
-    
+
     def getReader(self, directory=None):
         if directory is None:
             directory = self.directory
         return DirectoryReader.open(directory)
+
+    def getOnlyLeafReader(self, reader):
+        subReaders = reader.leaves()
+        if subReaders.size() != 1:
+            raise ValueError(reader + " has " + subReaders.size() +
+                             " segments instead of exactly one")
+        return subReaders.get(0).reader()

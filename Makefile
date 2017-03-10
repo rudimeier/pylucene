@@ -15,10 +15,8 @@
 # site-packages directory.
 #
 
-VERSION=4.10.1-1
-LUCENE_SVN_VER=HEAD
-LUCENE_VER=4.10.1
-LUCENE_SVN=http://svn.apache.org/repos/asf/lucene/dev/tags/lucene_solr_4_10_1
+VERSION=6.4.1
+LUCENE_VER=6.4.1
 PYLUCENE:=$(shell pwd)
 LUCENE_SRC=lucene-java-$(LUCENE_VER)
 LUCENE=$(LUCENE_SRC)/lucene
@@ -45,26 +43,12 @@ LUCENE=$(LUCENE_SRC)/lucene
 # limit.
 #
 
-# Mac OS X 10.6 (64-bit Python 2.6, Java 1.6)
-#PREFIX_PYTHON=/usr
-#ANT=ant
-#PYTHON=$(PREFIX_PYTHON)/bin/python
-#JCC=$(PYTHON) -m jcc.__main__ --shared --arch x86_64
-#NUM_FILES=8
-
-# Mac OS X 10.6 (MacPorts 1.8.0 64-bit Python 2.7, Java 1.6)
-#PREFIX_PYTHON=/opt/local
-#ANT=ant
-#PYTHON=$(PREFIX_PYTHON)/bin/python
-#JCC=$(PYTHON) -m jcc --shared --arch x86_64
-#NUM_FILES=8
-
-# Mac OS X 10.6 (64-bit and 32-bit Python 2.6 together, Java 1.6)
-#PREFIX_PYTHON=/usr
-#ANT=ant
-#PYTHON=$(PREFIX_PYTHON)/bin/python
-#JCC=$(PYTHON) -m jcc.__main__ --shared --arch x86_64 --arch i386
-#NUM_FILES=8
+# Mac OS X 10.12 (64-bit Python 2.7, Java 1.8)
+PREFIX_PYTHON=/Users/vajda/apache/pylucene/_install
+ANT=/Users/vajda/tmp/apache-ant-1.9.3/bin/ant
+PYTHON=$(PREFIX_PYTHON)/bin/python
+JCC=$(PYTHON) -m jcc.__main__ --shared --arch x86_64
+NUM_FILES=8
 
 # Mac OS X 10.5 (32-bit Python 2.5, Java 1.5)
 #PREFIX_PYTHON=/usr
@@ -80,25 +64,11 @@ LUCENE=$(LUCENE_SRC)/lucene
 #JCC=$(PYTHON) /System/Library/Frameworks/Python.framework/Versions/2.3/lib/python2.3/site-packages/JCC-2.3-py2.3-macosx-10.4-i386.egg/jcc/__init__.py
 #NUM_FILES=8
 
-# Mac OS X  (Python 2.3.5, Java 1.5, setuptools 0.6c7, PPC Mac OS X 10.4)
-#PREFIX_PYTHON=/usr
-#ANT=ant
-#PYTHON=$(PREFIX_PYTHON)/bin/python
-#JCC=$(PYTHON) /System/Library/Frameworks/Python.framework/Versions/2.3/lib/python2.3/site-packages/JCC-2.3-py2.3-macosx-10.4-ppc.egg/jcc/__init__.py
-#NUM_FILES=8
-
-# Linux     (Ubuntu 11.10 64-bit, Python 2.7.2, OpenJDK 1.7, setuptools 0.6.16)
+# Linux     (Debian Jessie 64-bit, Python 2.7.9, Oracle Java 1.8
 # Be sure to also set JDK['linux2'] in jcc's setup.py to the JAVA_HOME value
 # used below for ANT (and rebuild jcc after changing it).
-#PREFIX_PYTHON=/usr
-#ANT=JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64 /usr/bin/ant
-#PYTHON=$(PREFIX_PYTHON)/bin/python
-#JCC=$(PYTHON) -m jcc --shared
-#NUM_FILES=8
-
-# Linux     (Ubuntu 8.10 64-bit, Python 2.5.2, OpenJDK 1.6, setuptools 0.6c9)
-#PREFIX_PYTHON=/usr
-#ANT=ant
+#PREFIX_PYTHON=/opt/apache/pylucene/_install
+#ANT=JAVA_HOME=/usr/lib/jvm/java-8-oracle /usr/bin/ant
 #PYTHON=$(PREFIX_PYTHON)/bin/python
 #JCC=$(PYTHON) -m jcc --shared
 #NUM_FILES=8
@@ -163,13 +133,13 @@ JARS+=$(JOIN_JAR)               # join module
 JARS+=$(FACET_JAR)              # facet module
 JARS+=$(SUGGEST_JAR)            # suggest/spell module
 JARS+=$(EXPRESSIONS_JAR)        # expressions module
+JARS+=$(KUROMOJI_JAR)           # japanese analyzer module
+JARS+=$(MISC_JAR)               # misc
 
 
 #
 # No edits required below
 #
-
-SVNOP?=export
 
 ifeq ($(DEBUG),1)
   DEBUG_OPT=--debug
@@ -193,11 +163,12 @@ JOIN_JAR=$(LUCENE)/build/join/lucene-join-$(LUCENE_VER).jar
 FACET_JAR=$(LUCENE)/build/facet/lucene-facet-$(LUCENE_VER).jar
 SUGGEST_JAR=$(LUCENE)/build/suggest/lucene-suggest-$(LUCENE_VER).jar
 EXPRESSIONS_JAR=$(LUCENE)/build/expressions/lucene-expressions-$(LUCENE_VER).jar
-
+KUROMOJI_JAR=$(LUCENE)/build/analysis/kuromoji/lucene-analyzers-kuromoji-$(LUCENE_VER).jar
 MISC_JAR=$(LUCENE)/build/misc/lucene-misc-$(LUCENE_VER).jar
-ANTLR_JAR=$(LUCENE)/expressions/lib/antlr-runtime-3.5.jar
-ASM_JAR=$(LUCENE)/expressions/lib/asm-4.1.jar
-ASM_COMMONS_JAR=$(LUCENE)/expressions/lib/asm-commons-4.1.jar
+
+ANTLR_JAR=$(LUCENE)/expressions/lib/antlr4-runtime-4.5.1-1.jar
+ASM_JAR=$(LUCENE)/expressions/lib/asm-5.1.jar
+ASM_COMMONS_JAR=$(LUCENE)/expressions/lib/asm-commons-5.1.jar
 
 ICUPKG:=$(shell which icupkg)
 
@@ -207,8 +178,8 @@ ICUPKG:=$(shell which icupkg)
 default: all
 
 $(LUCENE_SRC):
-	svn $(SVNOP) --depth files -r $(LUCENE_SVN_VER) $(LUCENE_SVN) $(LUCENE_SRC)
-	svn $(SVNOP) -r $(LUCENE_SVN_VER) $(LUCENE_SVN)/lucene $(LUCENE_SRC)/lucene
+	mkdir -p $(LUCENE_SRC)
+	tar -C ~/apache/lucene.git -cf - lucene | tar -C $(LUCENE_SRC) -xvf -
 
 sources: $(LUCENE_SRC)
 
@@ -223,14 +194,6 @@ else ifeq ($(NUM_FILES),)
 	$(error NUM_FILES is not defined, please edit Makefile as required at top)
 endif
 	cd $(LUCENE); ($(ANT) ivy-availability-check || $(ANT) ivy-bootstrap)
-
-to-orig: sources
-	mkdir -p $(LUCENE)-orig
-	tar -C $(LUCENE) -cf - . | tar -C $(LUCENE)-orig -xvf -
-
-from-orig: $(LUCENE)-orig
-	mkdir -p $(LUCENE)
-	tar -C $(LUCENE)-orig -cf - . | tar -C $(LUCENE) -xvf -
 
 lucene:
 	rm -f $(LUCENE_JAR)
@@ -284,12 +247,15 @@ $(SUGGEST_JAR): $(LUCENE_JAR)
 $(EXPRESSIONS_JAR): $(LUCENE_JAR)
 	cd $(LUCENE)/expressions; $(ANT) -Dversion=$(LUCENE_VER)
 
+$(KUROMOJI_JAR): $(LUCENE_JAR)
+	cd $(LUCENE)/analysis/kuromoji; $(ANT) -Dversion=$(LUCENE_VER)
+
 $(MISC_JAR): $(LUCENE_JAR)
 	cd $(LUCENE)/misc; $(ANT) -Dversion=$(LUCENE_VER)
 
 JCCFLAGS?=
 
-jars: $(JARS) $(MISC_JAR) $(ANTLR_JAR) $(ASM_JAR) $(ASM_COMMONS)
+jars: $(JARS) $(ANTLR_JAR) $(ASM_JAR) $(ASM_COMMONS)
 
 
 ifneq ($(ICUPKG),)
@@ -318,7 +284,6 @@ endif
 
 GENERATE=$(JCC) $(foreach jar,$(JARS),--jar $(jar)) \
            $(JCCFLAGS) --use_full_names \
-           --include $(MISC_JAR) \
            --include $(ANTLR_JAR) \
            --include $(ASM_JAR) \
            --include $(ASM_COMMONS_JAR) \
@@ -338,16 +303,19 @@ GENERATE=$(JCC) $(foreach jar,$(JARS),--jar $(jar)) \
            --package java.util.concurrent java.util.concurrent.Executors \
            --package java.util.regex \
            --package java.io java.io.StringReader \
-                             java.io.InputStreamReader \
-                             java.io.FileInputStream \
-                             java.io.DataInputStream \
+           --package java.nio.file java.nio.file.Path \
+                                   java.nio.file.Files \
+                                   java.nio.file.Paths \
            --exclude org.apache.lucene.sandbox.queries.regex.JakartaRegexpCapabilities \
            --exclude org.apache.regexp.RegexpTunnel \
+           --exclude org.apache.lucene.store.WindowsDirectory \
+           --exclude org.apache.lucene.store.NativePosixUtil \
            --python lucene \
            --mapping org.apache.lucene.document.Document 'get:(Ljava/lang/String;)Ljava/lang/String;' \
            --mapping java.util.Properties 'getProperty:(Ljava/lang/String;)Ljava/lang/String;' \
            --sequence java.util.AbstractList 'size:()I' 'get:(I)Ljava/lang/Object;' \
            org.apache.lucene.index.IndexWriter:getReader \
+           org.apache.lucene.analysis.Tokenizer:input \
            --version $(LUCENE_VER) \
            --module python/collections.py \
            --module python/ICUNormalizer2Filter.py \
@@ -411,11 +379,10 @@ distrib:
 	cd distrib; md5sum $(ARCHIVE) > $(ARCHIVE).md5
 
 stage:
-	cd distrib; scp -p $(ARCHIVE) $(ARCHIVE).asc $(ARCHIVE).md5 \
-                           people.apache.org:public_html/staging_area
+	cd distrib; cp -p $(ARCHIVE) $(ARCHIVE).asc $(ARCHIVE).md5 ../../dist/dev/pylucene/
 
 release:
-	cd distrib; cp -p $(ARCHIVE) $(ARCHIVE).asc $(ARCHIVE).md5 ../../dist/pylucene/
+	cd distrib; cp -p $(ARCHIVE) $(ARCHIVE).asc $(ARCHIVE).md5 ../../dist/release/pylucene/
 
 print-%:
 	@echo $* = $($*)

@@ -21,17 +21,15 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.queryparser.classic.ParseException;
-import org.apache.lucene.util.Version;
 
 
 public class PythonMultiFieldQueryParser extends MultiFieldQueryParser {
 
     private long pythonObject;
 
-    public PythonMultiFieldQueryParser(Version version, String[] fields,
-                                       Analyzer analyzer)
+    public PythonMultiFieldQueryParser(String[] fields, Analyzer analyzer)
     {
-        super(version, fields, analyzer);
+        super(fields, analyzer);
     }
 
     public void pythonExtension(long pythonObject)
@@ -50,15 +48,22 @@ public class PythonMultiFieldQueryParser extends MultiFieldQueryParser {
     }
 
     public native void pythonDecRef();
-    public native Query getBooleanQuery(List clauses, boolean disableCoord);
 
+    @Override
+    public native Query getBooleanQuery(List clauses);
+
+    @Override
     public native Query getFuzzyQuery(String field, String termText,
                                       float minSimilarity);
+    @Override
     public native Query getPrefixQuery(String field, String termText);
+
+    @Override
     public native Query getRangeQuery(String field,
                                       String part1, String part2,
                                       boolean startInclusive,
                                       boolean endInclusive);
+    @Override
     public native Query getWildcardQuery(String field, String termText);
 
     public native Query getFieldQuery_quoted(String field, String queryText,

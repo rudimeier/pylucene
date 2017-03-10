@@ -16,7 +16,6 @@ import sys, lucene, unittest
 from PyLuceneTestCase import PyLuceneTestCase
 
 from org.apache.lucene.analysis.standard import StandardAnalyzer
-from org.apache.lucene.util import Version
 from org.apache.pylucene.queryparser.classic import PythonQueryParser
 
 
@@ -29,15 +28,10 @@ class PythonExceptionTestCase(PyLuceneTestCase):
             def getFieldQuery_quoted(_self, field, queryText, quoted):
                 raise TestException("TestException")
 
-        qp = TestQueryParser(Version.LUCENE_CURRENT, 'all',
-                             StandardAnalyzer(Version.LUCENE_CURRENT))
+        qp = TestQueryParser('all', StandardAnalyzer())
 
-        if lucene.getVMEnv().isShared():
-            with self.assertRaises(TestException):
-                qp.parse("foo bar")
-        else:
-            with self.assertRaises(lucene.JavaError):
-                qp.parse("foo bar")
+        with self.assertRaises(TestException):
+            qp.parse("foo bar")
 
 
 if __name__ == "__main__":

@@ -12,7 +12,7 @@
 
 import os, sys, platform, subprocess
 
-jcc_ver = '2.21'
+jcc_ver = '2.23'
 machine = platform.machine()
 
 if machine.startswith("iPod") or machine.startswith("iPhone"):
@@ -54,7 +54,7 @@ else:
 JDK = {
     'darwin': JAVAHOME or JAVAFRAMEWORKS,
     'ipod': '/usr/include/gcc',
-    'linux2': '/usr/lib/jvm/java-7-openjdk-amd64',
+    'linux2': '/usr/lib/jvm/java-8-oracle',
     'sunos5': '/usr/jdk/instances/jdk1.6.0',
     'win32': JAVAHOME,
     'mingw32': JAVAHOME,
@@ -66,7 +66,7 @@ if 'JCC_JDK' in os.environ:
 
 if not JDK[platform]:
     raise RuntimeError('''
-                       
+
 Can't determine where the Java JDK has been installed on this machine.
 
 Please set the environment variable JCC_JDK to that location before
@@ -75,7 +75,7 @@ running setup.py.
 
 elif not os.path.isdir(JDK[platform]):
     raise RuntimeError('''
-                       
+
 Java JDK directory '%s' does not exist.
 
 Please set the environment variable JCC_JDK to the correct location before
@@ -101,7 +101,8 @@ INCLUDES = {
 }
 
 CFLAGS = {
-    'darwin': ['-fno-strict-aliasing', '-Wno-write-strings'],
+    'darwin': ['-fno-strict-aliasing', '-Wno-write-strings',
+               '-mmacosx-version-min=10.5'],
     'ipod': ['-Wno-write-strings'],
     'linux2': ['-fno-strict-aliasing', '-Wno-write-strings'],
     'sunos5': ['-features=iddollar',
@@ -123,11 +124,12 @@ DEBUG_CFLAGS = {
 }
 
 LFLAGS = {
-    'darwin/frameworks': ['-framework', 'JavaVM'],
+    'darwin/frameworks': ['-framework', 'JavaVM', '-mmacosx-version-min=10.5'],
     'darwin/home': ['-L%(darwin)s/jre/lib' %(JDK), '-ljava',
                     '-L%(darwin)s/jre/lib/server' %(JDK), '-ljvm',
                     '-Wl,-rpath', '-Wl,%(darwin)s/jre/lib' %(JDK),
-                    '-Wl,-rpath', '-Wl,%(darwin)s/jre/lib/server' %(JDK)],
+                    '-Wl,-rpath', '-Wl,%(darwin)s/jre/lib/server' %(JDK),
+                    '-mmacosx-version-min=10.5'],
     'ipod': ['-ljvm', '-lpython%s.%s' %(sys.version_info[0:2]),
              '-L/usr/lib/gcc/arm-apple-darwin9/4.0.1'],
     'linux2/i386': ['-L%(linux2)s/jre/lib/i386' %(JDK), '-ljava',
@@ -191,25 +193,20 @@ try:
     from pkg_resources import require
     with_setuptools = require('setuptools')[0].parsed_version
 
-    enable_shared = False
-    with_setuptools_c7 = ('00000000', '00000006', '*c', '00000007', '*final')
-    with_setuptools_116 = ('00000001', '00000001', '00000006', '*final')
+    try:
+        from pkg_resources import SetuptoolsVersion
+        with_modern_setuptools = True
+    except ImportError:
+        with_modern_setuptools = False
 
-    if with_setuptools >= with_setuptools_c7 and 'NO_SHARED' not in os.environ:
+    enable_shared = False
+
+    if with_modern_setuptools and 'NO_SHARED' not in os.environ:
         if platform in ('ipod', 'win32'):
             enable_shared = True
 
         elif platform == 'darwin':
             enable_shared = True
-            if with_setuptools >= with_setuptools_116:
-                # fix Library building by monkey-patching expected _config_vars
-                # into build_ext otherwise build_ext is using sysconfig's
-                # instead, wrongly
-                from setuptools.command import build_ext
-                from distutils.sysconfig import get_config_var
-                get_config_var("LDSHARED")  # ensure _config_vars is initialized
-                from distutils.sysconfig import _config_vars
-                build_ext._CONFIG_VARS = _config_vars
 
         elif platform == 'linux2':
             from helpers.linux import patch_setuptools
@@ -224,10 +221,7 @@ try:
             distutils.cygwinccompiler.Mingw32CCompiler = JCCMinGW32CCompiler
 
         if enable_shared:
-            if with_setuptools >= with_setuptools_116:
-                from setuptools.extension import Library
-            else:
-                from setuptools import Library
+            from setuptools.extension import Library
 
 except ImportError:
     if sys.version_info < (2, 4):
