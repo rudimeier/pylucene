@@ -65,12 +65,12 @@ class PositionIncrementTestCase(TestCase):
         searcher = IndexSearcher(store, True)
 
         pos = searcher.getIndexReader().termPositions(Term("field", "1"))
-        next(pos)
+        pos.next()
         # first token should be at position 0
         self.assertEqual(0, pos.nextPosition())
     
         pos = searcher.getIndexReader().termPositions(Term("field", "2"))
-        next(pos)
+        pos.next()
         # second token should be at position 2
         self.assertEqual(2, pos.nextPosition())
     
@@ -206,7 +206,7 @@ class PositionIncrementTestCase(TestCase):
 
         tp = r.termPositions(Term("content", "a"))
         count = 0
-        self.assertTrue(next(tp))
+        self.assertTrue(tp.next())
         # "a" occurs 4 times
         self.assertEqual(4, tp.freq())
 
@@ -217,7 +217,7 @@ class PositionIncrementTestCase(TestCase):
         self.assertEqual(6, tp.nextPosition())
 
         # only one doc has "a"
-        self.assertTrue(not next(tp))
+        self.assertTrue(not tp.next())
 
         searcher = IndexSearcher(r)
     
@@ -230,7 +230,7 @@ class PositionIncrementTestCase(TestCase):
         sawZero = False
 
         pspans = snq.getSpans(searcher.getIndexReader())
-        while next(pspans):
+        while pspans.next():
             payloads = pspans.getPayload()
             sawZero |= pspans.start() == 0
 
@@ -245,7 +245,7 @@ class PositionIncrementTestCase(TestCase):
         spans = snq.getSpans(searcher.getIndexReader())
         count = 0
         sawZero = False
-        while next(spans):
+        while spans.next():
             count += 1
             sawZero |= spans.start() == 0
 

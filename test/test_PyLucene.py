@@ -254,7 +254,7 @@ class Test_PyLuceneBase(object):
 
             while term_enum.term().field() == 'docid':
                 docids.append(term_enum.term().text())
-                next(term_enum)
+                term_enum.next()
             self.assertEqual(len(docids), 2)
         finally:
             self.closeStore(store, reader)

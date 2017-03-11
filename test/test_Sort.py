@@ -22,6 +22,10 @@ from lucene import *
 NUM_STRINGS = 6000
 
 
+# for python3
+def cmp(a, b):
+    return (a > b) - (a < b)
+
 
 class SortTestCase(TestCase):
     """
@@ -693,7 +697,7 @@ class SortTestCase(TestCase):
                 bs.set(docs1.scoreDocs[0].doc)
                 return DocIdBitSet(bs)
 
-        filt = list(filter())
+        filt = filter()
 
         docs2 = self.full.search(self.queryE, filt, nDocs, sort)
         self.assertEqual(docs1.scoreDocs[0].score,

@@ -13,7 +13,7 @@ TestDataDocumentHandler.createIndex(os.path.join(baseDir, 'data'),
 
 tar = tarfile.open(os.path.join(baseDir, 'indexes.tar.gz'), "r:gz")
 while True:
-    member = next(tar)
+    member = tar.next()
     if member is None:
         break
     print(member.name)

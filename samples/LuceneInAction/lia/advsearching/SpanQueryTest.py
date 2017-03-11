@@ -175,7 +175,7 @@ class SpanQueryTest(TestCase):
         for scoreDoc in scoreDocs:
             scores[scoreDoc.doc] = scoreDoc.score
 
-        while next(spans):
+        while spans.next():
             numSpans += 1
 
             id = spans.doc()

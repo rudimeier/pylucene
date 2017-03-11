@@ -42,14 +42,14 @@ class TestDataDocumentHandler(object):
 
     def indexFile(cls, writer, path, baseDir):
         
-        input = file(path)
+        input = open(path, encoding='unicode-escape')
         props = {}
         while True:
             line = input.readline().strip()
             if not line:
                 break
             name, value = line.split('=', 1)
-            props[name] = value.decode('unicode-escape')
+            props[name] = value
         input.close()
 
         doc = Document()

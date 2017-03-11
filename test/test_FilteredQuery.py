@@ -72,7 +72,7 @@ class FilteredQueryTestCase(TestCase):
                 bitset.set(3)
                 return DocIdBitSet(bitset)
 
-        self.filter = list(filter())
+        self.filter = filter()
 
     def tearDown(self):
 

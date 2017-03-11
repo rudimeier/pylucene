@@ -149,7 +149,7 @@ class PythonFileStreamOutput(PythonIndexOutput):
 
     def flushBuffer(self, bytes):
 
-        self.fh.write(bytes.string_)
+        self.fh.write(bytes.bytes_)
         self.fh.flush()
         self._length += len(bytes)
 
