@@ -217,7 +217,7 @@ class PositionIncrementTestCase(PyLuceneTestCase):
         count = 0
         sawZero = False
         pspans = MultiSpansWrapper.wrap(searcher.getTopReaderContext(), snq)
-        while next(pspans):
+        while pspans.next():
             payloads = pspans.getPayload()
             sawZero |= pspans.start() == 0
 
@@ -232,7 +232,7 @@ class PositionIncrementTestCase(PyLuceneTestCase):
         spans = MultiSpansWrapper.wrap(searcher.getTopReaderContext(), snq)
         count = 0
         sawZero = False
-        while next(spans):
+        while spans.next():
             count += 1
             sawZero |= spans.start() == 0
 

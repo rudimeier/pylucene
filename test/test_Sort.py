@@ -42,6 +42,9 @@ from org.apache.pylucene.search import \
 
 NUM_STRINGS = 750
 
+# for python3
+def cmp(a, b):
+    return (a > b) - (a < b)
 
 class SortTestCase(PyLuceneTestCase):
     """
@@ -769,7 +772,7 @@ class SortTestCase(PyLuceneTestCase):
                 bs.set(docs1.scoreDocs[0].doc)
                 return DocIdBitSet(bs)
 
-        docs2 = self.full.search(self.queryE, list(filter()), nDocs, sort, True, True)
+        docs2 = self.full.search(self.queryE, filter(), nDocs, sort, True, True)
 
         self.assertEqual(docs1.scoreDocs[0].score,
                          docs2.scoreDocs[0].score,

@@ -158,9 +158,9 @@ class PythonFileStreamOutput(PythonIndexOutput):
 
     def writeByte(self, b):
         if b < 0:
-            data = chr(b + 256)
+            data = bytes([b + 256])
         else:
-            data = chr(b)
+            data = bytes([b])
         self.fh.write(data)
         self._length += 1
 
@@ -170,7 +170,7 @@ class PythonFileStreamOutput(PythonIndexOutput):
             self.crc = crc32(data, self.crc)
 
     def writeBytes(self, bytes):
-        data = bytes.string_
+        data = bytes.bytes_
         self.fh.write(data)
         self.fh.flush()
         self._length += len(data)

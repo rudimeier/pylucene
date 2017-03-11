@@ -76,17 +76,17 @@ class JavaSet(PythonSet):
                 if hasattr(_self, '_next'):
                     return True
                 try:
-                    _self._next = next(_self._iterator)
+                    _self._next = _self._iterator.__next__()
                     return True
                 except StopIteration:
                     return False
-            def __next__(_self):
+            def next(_self):
                 if hasattr(_self, '_next'):
-                    next = _self._next
+                    _next = _self._next
                     del _self._next
                 else:
-                    next = next(_self._iterator)
-                return next
+                    _next = _self._iterator.__next__()
+                return _next
         return _iterator()
 
     def remove(self, obj):
@@ -132,7 +132,7 @@ class JavaListIterator(PythonListIterator):
         self._lastIndex = -1 # keep state for remove/set
         self.index = index
 
-    def __next__(self):
+    def next(self):
         if self.index >= len(self._lst):
             raise JavaError(NoSuchElementException(str(self.index)))
         result = self._lst[self.index]
@@ -266,16 +266,16 @@ class JavaList(PythonList):
                 if hasattr(_self, '_next'):
                     return True
                 try:
-                    _self._next = next(_self._iterator)
+                    _self._next = _self._iterator.__next__()
                     return True
                 except StopIteration:
                     return False
-            def __next__(_self):
+            def next(_self):
                 if hasattr(_self, '_next'):
                     next = _self._next
                     del _self._next
                 else:
-                    next = next(_self._iterator)
+                    next = _self._iterator.__next__()
                 return next
         return _iterator()
 
