@@ -99,7 +99,7 @@ LUCENE=$(LUCENE_SRC)/lucene
 # used below for ANT (and rebuild jcc after changing it).
 PREFIX_PYTHON=/usr
 ANT=JAVA_HOME=/usr/lib64/jvm/java-1.7.0-openjdk /usr/bin/ant
-PYTHON=$(PREFIX_PYTHON)/bin/python2
+PYTHON=$(PREFIX_PYTHON)/bin/python3
 JCC=$(PYTHON) -m jcc --shared
 NUM_FILES=4
 
@@ -265,7 +265,7 @@ jars: $(JARS)
 ifneq ($(ICUPKG),)
 
 RESOURCES=--resources $(LUCENE)/contrib/icu/src/resources
-ENDIANNESS:=$(shell $(PYTHON) -c "import struct; print struct.pack('h', 1) == '\000\001' and 'b' or 'l'")
+ENDIANNESS:=$(shell $(PYTHON) -c "import struct; print(struct.pack('h', 1) == '\000\001' and 'b' or 'l')")
 
 resources: $(LUCENE)/contrib/icu/src/resources/org/apache/lucene/analysis/icu/utr30.dat
 
