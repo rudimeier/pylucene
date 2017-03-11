@@ -52,4 +52,4 @@ class LockTest(TestCase):
                 pass
         finally:
             writer1.close()
-            self.assert_(writer2 is None)
+            self.assertTrue(writer2 is None)

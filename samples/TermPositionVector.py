@@ -22,16 +22,16 @@ iwriter.close()
 ireader = IndexReader.open(directory, True)
 tpv = TermPositionVector.cast_(ireader.getTermFreqVector(0, 'fieldname'))
 
-for (t,f,i) in zip(tpv.getTerms(),tpv.getTermFrequencies(),xrange(100000)):
-    print 'term %s' % t
-    print '  freq: %i' % f
+for (t,f,i) in zip(tpv.getTerms(),tpv.getTermFrequencies(),range(100000)):
+    print('term %s' % t)
+    print('  freq: %i' % f)
     try:
-        print '  pos: ' + str([p for p in tpv.getTermPositions(i)])
+        print('  pos: ' + str([p for p in tpv.getTermPositions(i)]))
     except:
-        print '  no pos'
+        print('  no pos')
     try:
-        print '  off: ' + \
+        print('  off: ' + \
               str(["%i-%i" % (o.getStartOffset(), o.getEndOffset())
-                   for o in tpv.getOffsets(i)])
+                   for o in tpv.getOffsets(i)]))
     except:
-        print '  no offsets'
+        print('  no offsets')

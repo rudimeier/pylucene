@@ -42,7 +42,7 @@ class BookLinkCollector(PythonCollector):
         title = self.titles[docID]
         self.documents[url] = title
 
-        print "%s: %s" %(title, score)
+        print("%s: %s" %(title, score))
 
     def getLinks(self):
 

@@ -51,9 +51,9 @@ class BooleanQueryTest(LiaTestCase):
 
         searcher = IndexSearcher(self.directory, True)
         scoreDocs = searcher.search(enlightenmentBooks, 50).scoreDocs
-        print "or =", enlightenmentBooks
+        print("or =", enlightenmentBooks)
 
         self.assertHitsIncludeTitle(searcher, scoreDocs,
                                     "Extreme Programming Explained")
         self.assertHitsIncludeTitle(searcher, scoreDocs,
-                                    u"Tao Te Ching \u9053\u5FB7\u7D93")
+                                    "Tao Te Ching \u9053\u5FB7\u7D93")

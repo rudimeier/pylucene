@@ -60,7 +60,7 @@ class BooleanPrefixQueryTestCase(TestCase):
             bq.add(query, BooleanClause.Occur.MUST)
       
             rw2 = bq.rewrite(reader)
-        except Exception, e:
+        except Exception as e:
             self.fail(e)
 
         self.assertEqual(self.getCount(reader, rw1), self.getCount(reader, rw2),

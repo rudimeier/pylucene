@@ -113,7 +113,7 @@ class Test_PyLuceneBase(object):
             # using a unicode body cause problems, which seems very odd
             # since the python type is the same regardless affter doing
             # the encode
-            body_text = u"hello world"*20
+            body_text = "hello world"*20
             body_reader = StringReader(body_text)
             doc.add(Field("content", body_reader))
 
@@ -152,7 +152,7 @@ class Test_PyLuceneBase(object):
                                                 [SHOULD, SHOULD],
                                                 self.getAnalyzer())
             topDocs = searcher.search(query, 50)
-            self.assertEquals(1, topDocs.totalHits)
+            self.assertEqual(1, topDocs.totalHits)
         finally:
             self.closeStore(store, searcher)
         
@@ -254,7 +254,7 @@ class Test_PyLuceneBase(object):
 
             while term_enum.term().field() == 'docid':
                 docids.append(term_enum.term().text())
-                term_enum.next()
+                next(term_enum)
             self.assertEqual(len(docids), 2)
         finally:
             self.closeStore(store, reader)
@@ -269,15 +269,15 @@ class Test_PyLuceneBase(object):
             reader = IndexReader.open(store, True)
             fieldInfos = ReaderUtil.getMergedFieldInfos(reader)
             for fieldInfo in fieldInfos.iterator():
-                self.assert_(fieldInfo.name in ['owner', 'search_name',
+                self.assertTrue(fieldInfo.name in ['owner', 'search_name',
                                                 'meta_words', 'docid', 'title'])
         
                 if fieldInfo.isIndexed:
-                    self.assert_(fieldInfo.name in ['owner', 'meta_words',
+                    self.assertTrue(fieldInfo.name in ['owner', 'meta_words',
                                                     'docid', 'title'])
 
                 if fieldInfo.isIndexed and not fieldInfo.storeTermVector:
-                    self.assert_(fieldInfo.name in ['owner', 'meta_words',
+                    self.assertTrue(fieldInfo.name in ['owner', 'meta_words',
                                                     'docid', 'title'])
         finally:
             store = self.closeStore(store, reader)

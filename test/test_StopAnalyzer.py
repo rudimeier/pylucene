@@ -28,15 +28,15 @@ class StopAnalyzerTestCase(TestCase):
 
     def testDefaults(self):
 
-        self.assert_(self.stop is not None)
+        self.assertTrue(self.stop is not None)
         reader = StringReader("This is a test of the english stop analyzer")
         stream = self.stop.tokenStream("test", reader)
-        self.assert_(stream is not None)
+        self.assertTrue(stream is not None)
 
         termAtt = stream.getAttribute(TermAttribute.class_)
     
         while stream.incrementToken():
-            self.assert_(termAtt.term() not in self.invalidTokens)
+            self.assertTrue(termAtt.term() not in self.invalidTokens)
 
     def testStopList(self):
 
@@ -48,14 +48,14 @@ class StopAnalyzerTestCase(TestCase):
         newStop = StopAnalyzer(Version.LUCENE_24, stopWordsSet)
         reader = StringReader("This is a good test of the english stop analyzer")
         stream = newStop.tokenStream("test", reader)
-        self.assert_(stream is not None)
+        self.assertTrue(stream is not None)
 
         termAtt = stream.getAttribute(TermAttribute.class_)
         posIncrAtt = stream.addAttribute(PositionIncrementAttribute.class_)
     
         while stream.incrementToken():
             text = termAtt.term()
-            self.assert_(text not in stopWordsSet)
+            self.assertTrue(text not in stopWordsSet)
             # by default stop tokenizer does not apply increments.
             self.assertEqual(1, posIncrAtt.getPositionIncrement())
 
@@ -70,7 +70,7 @@ class StopAnalyzerTestCase(TestCase):
         reader = StringReader("This is a good test of the english stop analyzer with positions")
         expectedIncr = [ 1,   1, 1,          3, 1,  1,      1,            2,   1]
         stream = newStop.tokenStream("test", reader)
-        self.assert_(stream is not None)
+        self.assertTrue(stream is not None)
 
         i = 0
         termAtt = stream.getAttribute(TermAttribute.class_)
@@ -78,7 +78,7 @@ class StopAnalyzerTestCase(TestCase):
 
         while stream.incrementToken():
             text = termAtt.term()
-            self.assert_(text not in stopWordsSet)
+            self.assertTrue(text not in stopWordsSet)
             self.assertEqual(expectedIncr[i],
                              posIncrAtt.getPositionIncrement())
             i += 1

@@ -41,11 +41,11 @@ class LiaTestCase(TestCase):
     def dumpHits(self, searcher, scoreDocs):
 
         if not scoreDocs:
-            print "No hits"
+            print("No hits")
         else:
             for scoreDoc in scoreDocs:
-                print "%s: %s" %(scoreDoc.score,
-                                 searcher.doc(scoreDoc.doc).get('title'))
+                print("%s: %s" %(scoreDoc.score,
+                                 searcher.doc(scoreDoc.doc).get('title')))
 
     def assertHitsIncludeTitle(self, searcher, scoreDocs, title,
                                fail=False):

@@ -31,7 +31,7 @@ class FileIndexer(object):
     def main(cls, argv):
 
         if len(argv) != 3:
-            print "Usage: python FileIndexer.py <index dir> <data dir>"
+            print("Usage: python FileIndexer.py <index dir> <data dir>")
             return
 
         indexDir = argv[1]
@@ -56,12 +56,12 @@ class FileIndexer(object):
         numIndexed = cls.index(indexDir, dataDir)
         duration = timedelta(seconds=time() - start)
 
-        print "Indexing %s files took %s" %(numIndexed, duration)
+        print("Indexing %s files took %s" %(numIndexed, duration))
 
     def index(cls, indexDir, dataDir):
 
         if not (os.path.exists(dataDir) and os.path.isdir(dataDir)):
-            raise IOError, "%s does not exist or is not a directory" %(dataDir)
+            raise IOError("%s does not exist or is not a directory" %(dataDir))
 
         writer = IndexWriter(indexDir, StandardAnalyzer(), True,
                              IndexWriter.MaxFieldLength.UNLIMITED)
@@ -101,7 +101,7 @@ class FileIndexer(object):
         if ext:
             handlerClassName = cls.handlerProps.get(ext, None)
             if handlerClassName is None:
-                print "error indexing %s: no handler for %s files" %(path, ext)
+                print("error indexing %s: no handler for %s files" %(path, ext))
                 return None
 
             try:
@@ -110,13 +110,13 @@ class FileIndexer(object):
 
                 doc = handler.indexFile(writer, path)
                 if doc is not None:
-                    print 'indexed', path
+                    print('indexed', path)
 
                 return doc
             except SyntaxError:
                 raise
-            except Exception, e:
-                print 'error indexing %s: %s' %(path, e)
+            except Exception as e:
+                print('error indexing %s: %s' %(path, e))
                 return None
 
     main = classmethod(main)

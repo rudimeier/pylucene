@@ -41,7 +41,7 @@ class TestBooleanQuery(TestCase):
         nested2.add(TermQuery(Term("field", "nestedvalue2")), BooleanClause.Occur.SHOULD)
         bq2.add(nested2, BooleanClause.Occur.SHOULD)
         
-        self.assert_(bq1.equals(bq2))
+        self.assertTrue(bq1.equals(bq2))
 
 
 if __name__ == "__main__":

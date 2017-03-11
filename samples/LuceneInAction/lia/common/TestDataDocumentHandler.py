@@ -66,11 +66,11 @@ class TestDataDocumentHandler(object):
         subject = props['subject']
         pubmonth = props['pubmonth']
 
-        print title.encode('utf8')
-        print author.encode('utf-8')
-        print subject.encode('utf-8')
-        print category.encode('utf-8')
-        print "---------"
+        print(title.encode('utf8'))
+        print(author.encode('utf-8'))
+        print(subject.encode('utf-8'))
+        print(category.encode('utf-8'))
+        print("---------")
 
         doc.add(Field("isbn", isbn,
                       Field.Store.YES, Field.Index.NOT_ANALYZED))

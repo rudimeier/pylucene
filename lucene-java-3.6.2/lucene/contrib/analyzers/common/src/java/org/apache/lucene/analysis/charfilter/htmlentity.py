@@ -19,7 +19,7 @@ import re
 # for inclusion in HTMLStripCharFilter.jflex.
 
 def main():
-  print get_apache_license()
+  print(get_apache_license())
   codes = {}
   regex = re.compile(r'\s*<!ENTITY\s+(\S+)\s+"&(?:#38;)?#(\d+);"')
   for line in get_entity_text().split('\n'):
@@ -38,42 +38,42 @@ def main():
     new_entry = ('"%s"' if first_entry else ' | "%s"') % key
     first_entry = False
     if len(output_line) + len(new_entry) >= 80:
-      print output_line
+      print(output_line)
       output_line = '                   '
     output_line += new_entry
     if key in ('quot','copy','gt','lt','reg','amp'):
       new_entry = ' | "%s"' % key.upper()
       if len(output_line) + len(new_entry) >= 80:
-        print output_line
+        print(output_line)
         output_line = '                   '
       output_line += new_entry
-  print output_line, ')'
+  print(output_line, ')')
 
-  print '%{'
-  print '  private static final Set<String> upperCaseVariantsAccepted'
-  print '      = new HashSet<String>(Arrays.asList("quot","copy","gt","lt","reg","amp"));'
-  print '  private static final CharArrayMap<Character> entityValues'
-  print '      = new CharArrayMap<Character>(Version.LUCENE_36, %i, false);' % len(keys)
-  print '  static {'
-  print '    String[] entities = {'
+  print('%{')
+  print('  private static final Set<String> upperCaseVariantsAccepted')
+  print('      = new HashSet<String>(Arrays.asList("quot","copy","gt","lt","reg","amp"));')
+  print('  private static final CharArrayMap<Character> entityValues')
+  print('      = new CharArrayMap<Character>(Version.LUCENE_36, %i, false);' % len(keys))
+  print('  static {')
+  print('    String[] entities = {')
   output_line = '     '
   for key in keys:
     new_entry = ' "%s", "%s",' % (key, codes[key])
     if len(output_line) + len(new_entry) >= 80:
-      print output_line
+      print(output_line)
       output_line = '     '
     output_line += new_entry
-  print output_line[:-1]
-  print '    };'
-  print '    for (int i = 0 ; i < entities.length ; i += 2) {'
-  print '      Character value = entities[i + 1].charAt(0);'
-  print '      entityValues.put(entities[i], value);'
-  print '      if (upperCaseVariantsAccepted.contains(entities[i])) {'
-  print '        entityValues.put(entities[i].toUpperCase(), value);'
-  print '      }'
-  print '    }'
-  print "  }"
-  print "%}"
+  print(output_line[:-1])
+  print('    };')
+  print('    for (int i = 0 ; i < entities.length ; i += 2) {')
+  print('      Character value = entities[i + 1].charAt(0);')
+  print('      entityValues.put(entities[i], value);')
+  print('      if (upperCaseVariantsAccepted.contains(entities[i])) {')
+  print('        entityValues.put(entities[i].toUpperCase(), value);')
+  print('      }')
+  print('    }')
+  print("  }")
+  print("%}")
 
 def get_entity_text():
 # The text below is taken verbatim from

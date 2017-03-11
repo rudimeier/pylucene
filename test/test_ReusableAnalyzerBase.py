@@ -38,16 +38,16 @@ class ReusableAnalyzerBaseTestCase(TestCase):
         analyzer = MyAnalyzer()
 
         for method in (analyzer.reusableTokenStream, analyzer.tokenStream):
-            for x in xrange(2):
+            for x in range(2):
                 reader = StringReader("This is a test of the english stop analyzer")
                 stream = method("test", reader)
 
                 termAtt = stream.getAttribute(TermAttribute.class_)
                 count = 0
                 while stream.incrementToken():
-                    self.assert_(termAtt.term() not in StopAnalyzer.ENGLISH_STOP_WORDS_SET)
+                    self.assertTrue(termAtt.term() not in StopAnalyzer.ENGLISH_STOP_WORDS_SET)
                     count += 1
-                self.assertEquals(4, count)
+                self.assertEqual(4, count)
 
 
 if __name__ == "__main__":

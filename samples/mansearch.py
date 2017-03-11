@@ -35,8 +35,8 @@ if __name__ == '__main__':
     initVM()
 
 def usage():
-    print sys.argv[0], "[--format=<format string>] [--index=<index dir>] [--stats] <query...>"
-    print "default index is found from MANDEX environment variable"
+    print(sys.argv[0], "[--format=<format string>] [--index=<index dir>] [--stats] <query...>")
+    print("default index is found from MANDEX environment variable")
 
 try:
     options, args = getopt(sys.argv[1:], '', ['format=', 'index=', 'stats'])
@@ -73,10 +73,10 @@ start = datetime.now()
 scoreDocs = searcher.search(query, 50).scoreDocs
 duration = datetime.now() - start
 if stats:
-    print >>sys.stderr, "Found %d document(s) (in %s) that matched query '%s':" %(len(scoreDocs), duration, query)
+    print("Found %d document(s) (in %s) that matched query '%s':" %(len(scoreDocs), duration, query), file=sys.stderr)
 
 for scoreDoc in scoreDocs:
     doc = searcher.doc(scoreDoc.doc)
     table = dict((field.name(), field.stringValue())
                  for field in doc.getFields())
-    print template.substitute(table)
+    print(template.substitute(table))

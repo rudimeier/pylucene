@@ -23,10 +23,10 @@ from IndexFiles import IndexFiles
 
 if __name__ == '__main__':
     if len(sys.argv) < 2:
-        print IndexFiles.__doc__
+        print(IndexFiles.__doc__)
         sys.exit(1)
     env=initVM()
-    print 'lucene', VERSION
+    print('lucene', VERSION)
 
     def fn():
         env.attachCurrentThread()
@@ -34,6 +34,6 @@ if __name__ == '__main__':
         IndexFiles(sys.argv[1], "index",
                    StandardAnalyzer(Version.LUCENE_CURRENT))
         end = datetime.now()
-        print end - start
+        print(end - start)
 
     threading.Thread(target=fn).start()

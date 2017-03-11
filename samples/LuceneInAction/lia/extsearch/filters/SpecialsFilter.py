@@ -28,7 +28,7 @@ class SpecialsFilter(PythonFilter):
 
     def getDocIdSet(self, reader):
 
-        bits = OpenBitSet(long(reader.maxDoc()))
+        bits = OpenBitSet(int(reader.maxDoc()))
         isbns = self.accessor.isbns()
 
         docs = JArray(int)(1)
@@ -39,7 +39,7 @@ class SpecialsFilter(PythonFilter):
                 termDocs = reader.termDocs(Term("isbn", isbn))
                 count = termDocs.read(docs, freqs)
                 if count == 1:
-                    bits.set(long(docs[0]))
+                    bits.set(int(docs[0]))
 
         return bits
 

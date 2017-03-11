@@ -49,4 +49,4 @@ class HighlightTest(LiaTestCase):
             stream = SimpleAnalyzer(Version.LUCENE_CURRENT).tokenStream("title", StringReader(title))
             fragment = highlighter.getBestFragment(stream, title)
     
-            print fragment
+            print(fragment)

@@ -393,7 +393,7 @@ class TestTermRangeFilter(BaseTestRangeFilter):
         writer = IndexWriter(farsiIndex, SimpleAnalyzer(), True, 
                              IndexWriter.MaxFieldLength.LIMITED)
         doc = Document()
-        doc.add(Field("content", u"\u0633\u0627\u0628", 
+        doc.add(Field("content", "\u0633\u0627\u0628", 
                       Field.Store.YES, Field.Index.NOT_ANALYZED))
         doc.add(Field("body", "body",
                       Field.Store.YES, Field.Index.NOT_ANALYZED))
@@ -416,10 +416,10 @@ class TestTermRangeFilter(BaseTestRangeFilter):
         # single index Term below should NOT be returned by a
         # TermRangeFilter with a Farsi Collator (or an Arabic one for the
         # case when Farsi is not supported).
-        numHits = search.search(q, TermRangeFilter("content", u"\u062F", u"\u0698", True, True, collator), 1000).totalHits
+        numHits = search.search(q, TermRangeFilter("content", "\u062F", "\u0698", True, True, collator), 1000).totalHits
         self.assertEqual(0, numHits, "The index Term should not be included.")
 
-        numHits = search.search(q, TermRangeFilter("content", u"\u0633", u"\u0638", True, True, collator), 1000).totalHits
+        numHits = search.search(q, TermRangeFilter("content", "\u0633", "\u0638", True, True, collator), 1000).totalHits
         self.assertEqual(1, numHits, "The index Term should be included.")
         search.close()
 
@@ -432,7 +432,7 @@ class TestTermRangeFilter(BaseTestRangeFilter):
 
         # Danish collation orders the words below in the given order
         # (example taken from TestSort.testInternationalSort() ).
-        words = [u"H\u00D8T", u"H\u00C5T", "MAND"]
+        words = ["H\u00D8T", "H\u00C5T", "MAND"]
         for word in words:
             doc = Document()
             doc.add(Field("content", word, Field.Store.YES,
@@ -449,15 +449,15 @@ class TestTermRangeFilter(BaseTestRangeFilter):
         q = TermQuery(Term("body", "body"))
 
         collator = Collator.getInstance(Locale("da", "dk"))
-        query = TermRangeQuery("content", "H\u00D8T", "MAND", False, False,
+        query = TermRangeQuery("content", "H\\u00D8T", "MAND", False, False,
                                collator)
 
         # Unicode order would not include "H\u00C5T" in [ "H\u00D8T", "MAND" ],
         # but Danish collation does.
-        numHits = search.search(q, TermRangeFilter("content", u"H\u00D8T", "MAND", False, False, collator), 1000).totalHits
+        numHits = search.search(q, TermRangeFilter("content", "H\u00D8T", "MAND", False, False, collator), 1000).totalHits
         self.assertEqual(1, numHits, "The index Term should be included.")
 
-        numHits = search.search(q, TermRangeFilter("content", u"H\u00C5T", "MAND", False, False, collator), 1000).totalHits
+        numHits = search.search(q, TermRangeFilter("content", "H\u00C5T", "MAND", False, False, collator), 1000).totalHits
         self.assertEqual(0, numHits, "The index Term should not be included.")
         search.close()
 

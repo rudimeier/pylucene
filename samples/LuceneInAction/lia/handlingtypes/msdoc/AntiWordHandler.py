@@ -37,6 +37,6 @@ class AntiWordHandler(object):
 
             exitCode = process.wait()
             if exitCode != 0:
-                raise RuntimeError, "pdftotext exit code %d" %(exitCode)
+                raise RuntimeError("pdftotext exit code %d" %(exitCode))
 
             return doc

@@ -37,7 +37,7 @@ class SpecialsFilterTest(LiaTestCase):
         
         filter = SpecialsFilter(accessor)
         topDocs = self.searcher.search(self.allBooks, filter, 50)
-        self.assertEquals(len(isbns), topDocs.totalHits, "the specials")
+        self.assertEqual(len(isbns), topDocs.totalHits, "the specials")
 
     def testFilteredQuery(self):
         
@@ -56,5 +56,5 @@ class SpecialsFilterTest(LiaTestCase):
         logoOrEdBooks.add(edBooksOnSpecial, BooleanClause.Occur.SHOULD)
 
         topDocs = self.searcher.search(logoOrEdBooks, 50)
-        print logoOrEdBooks
+        print(logoOrEdBooks)
         self.assertEqual(2, topDocs.totalHits, "Papert and Steiner")

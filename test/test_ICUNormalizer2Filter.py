@@ -18,7 +18,7 @@
 
 try:
     from icu import Normalizer2, UNormalizationMode2
-except ImportError, e:
+except ImportError as e:
     pass
 
 from unittest import main
@@ -47,17 +47,17 @@ class TestICUNormalizer2Filter(BaseTokenStreamTestCase):
         self._assertAnalyzesTo(a, "Ruß", [ "russ" ])
     
         # case folding
-        self._assertAnalyzesTo(a, u"ΜΆΪΟΣ", [ u"μάϊοσ" ])
-        self._assertAnalyzesTo(a, u"Μάϊος", [ u"μάϊοσ" ])
+        self._assertAnalyzesTo(a, "ΜΆΪΟΣ", [ "μάϊοσ" ])
+        self._assertAnalyzesTo(a, "Μάϊος", [ "μάϊοσ" ])
 
         # supplementary case folding
-        self._assertAnalyzesTo(a, u"𐐖", [ u"𐐾" ])
+        self._assertAnalyzesTo(a, "𐐖", [ "𐐾" ])
     
         # normalization
-        self._assertAnalyzesTo(a, u"ﴳﴺﰧ", [ u"طمطمطم" ])
+        self._assertAnalyzesTo(a, "ﴳﴺﰧ", [ "طمطمطم" ])
 
         # removal of default ignorables
-        self._assertAnalyzesTo(a, u"क्‍ष", [ u"क्ष" ])
+        self._assertAnalyzesTo(a, "क्‍ष", [ "क्ष" ])
   
     def testAlternate(self):
 
@@ -71,7 +71,7 @@ class TestICUNormalizer2Filter(BaseTokenStreamTestCase):
 
         a = analyzer()
         # decompose EAcute into E + combining Acute
-        self._assertAnalyzesTo(a, u"\u00E9", [ u"\u0065\u0301" ])
+        self._assertAnalyzesTo(a, "\u00E9", [ "\u0065\u0301" ])
 
 
 if __name__ == "__main__":

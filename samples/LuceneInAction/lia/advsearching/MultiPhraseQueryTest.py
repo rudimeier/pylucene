@@ -45,7 +45,7 @@ class MultiPhraseQueryTest(TestCase):
         query.add([Term("field", "quick"),
                    Term("field", "fast")])
         query.add(Term("field", "fox"))
-        print query
+        print(query)
 
         topDocs = self.searcher.search(query, 10)
         self.assertEqual(1, topDocs.totalHits, "fast fox match")
@@ -74,4 +74,4 @@ class MultiPhraseQueryTest(TestCase):
     def debug(self, hits):
 
         for i, doc in hits:
-            print "%s: %s" %(hits.score(i), doc['field'])
+            print("%s: %s" %(hits.score(i), doc['field']))

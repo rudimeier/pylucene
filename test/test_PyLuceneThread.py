@@ -71,7 +71,7 @@ class PyLuceneThreadTestCase(TestCase):
         """ Run 5 threads with 2000 queries each """
 
         threads = []
-        for i in xrange(5):
+        for i in range(5):
             threads.append(threading.Thread(target=self.runSearch,
                                             args=(2000,)))
 

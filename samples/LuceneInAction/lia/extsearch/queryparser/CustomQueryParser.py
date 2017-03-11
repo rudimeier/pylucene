@@ -29,10 +29,10 @@ class CustomQueryParser(PythonQueryParser):
         super(CustomQueryParser, self).__init__(Version.LUCENE_CURRENT, field, analyzer)
 
     def getFuzzyQuery(self, field, termText, minSimilarity):
-        raise AssertionError, "Fuzzy queries not allowed"
+        raise AssertionError("Fuzzy queries not allowed")
 
     def getWildcardQuery(self, field, termText):
-        raise AssertionError, "Wildcard queries not allowed"
+        raise AssertionError("Wildcard queries not allowed")
 
     #
     # Special handling for the "id" field, pads each part
@@ -51,7 +51,7 @@ class CustomQueryParser(PythonQueryParser):
                                   inclusive, True)
 
         if field == "special":
-            print part1, "->", part2
+            print(part1, "->", part2)
 
             return TermRangeQuery("field", part1, part2, inclusive, True)
 
@@ -89,10 +89,10 @@ class MultiFieldCustomQueryParser(PythonMultiFieldQueryParser):
         super(MultiFieldCustomQueryParser, self).__init__(Version.LUCENE_CURRENT, fields, analyzer)
 
     def getFuzzyQuery(self, super, field, termText, minSimilarity):
-        raise AssertionError, "Fuzzy queries not allowed"
+        raise AssertionError("Fuzzy queries not allowed")
 
     def getWildcardQuery(self, super, field, termText):
-        raise AssertionError, "Wildcard queries not allowed"
+        raise AssertionError("Wildcard queries not allowed")
 
     #
     # Special handling for the "id" field, pads each part
@@ -111,7 +111,7 @@ class MultiFieldCustomQueryParser(PythonMultiFieldQueryParser):
                                   inclusive, True)
 
         if field == "special":
-            print part1, "->", part2
+            print(part1, "->", part2)
 
             return TermRangeQuery("field", part1, part2, inclusive, True)
 

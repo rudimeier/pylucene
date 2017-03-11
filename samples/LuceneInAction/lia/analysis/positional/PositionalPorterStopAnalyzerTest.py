@@ -81,6 +81,6 @@ class PositionalPorterStopAnalyzerTest(TestCase):
 
         text = "The quick brown fox jumps over the lazy dogs"
         AnalyzerUtils.displayTokensWithPositions(cls.porterAnalyzer, text)
-        print ''
+        print('')
         
     main = classmethod(main)

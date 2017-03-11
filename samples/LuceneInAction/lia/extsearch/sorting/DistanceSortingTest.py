@@ -82,10 +82,10 @@ class DistanceSortingTest(TestCase):
 
     def dumpDocs(self, sort, docs):
 
-        print "Sorted by:", sort
+        print("Sorted by:", sort)
 
         for scoreDoc in docs.scoreDocs:
             fieldDoc = FieldDoc.cast_(scoreDoc)
             distance = Double.cast_(fieldDoc.fields[0]).doubleValue()
             doc = self.searcher.doc(fieldDoc.doc)
-            print "  %(name)s @ (%(location)s) ->" %doc, distance
+            print("  %(name)s @ (%(location)s) ->" %doc, distance)

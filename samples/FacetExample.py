@@ -139,7 +139,7 @@ class SimpleIndexer(object):
         # now safely in the provided directories: indexDir and taxoDir.
         taxo.close()
         iw.close()
-        print "Indexed %d documents with overall %d facets." % (nDocsAdded,nFacetsAdded)
+        print("Indexed %d documents with overall %d facets." % (nDocsAdded,nFacetsAdded))
 
     index = classmethod(index)
 
@@ -198,8 +198,8 @@ class SimpleSearcher(object):
         res = facetsCollector.getFacetResults()
         i = 0
         for facetResult in res:
-            print "Result #%d has %d descendants" % (i, facetResult.getNumValidDescendants())
-            print "Result #%d : %s" % (i, facetResult)
+            print("Result #%d has %d descendants" % (i, facetResult.getNumValidDescendants()))
+            print("Result #%d : %s" % (i, facetResult))
             i += 1
 
         return res
@@ -225,8 +225,8 @@ class SimpleSearcher(object):
         #  the elements of this iterator are of type Object and need to be casted to
         #  FacetResultNode by calling FacetResultNode.cast_(obj) first
         resIterator = subResults.iterator()
-        resIterator.next() # skip first result
-        resultNode = resIterator.next()
+        next(resIterator) # skip first result
+        resultNode = next(resIterator)
         resultNode = FacetResultNode.cast_(resultNode)
         categoryOfInterest = resultNode.getLabel()
         # drill-down preparation: turn the base query into a drill-down query for the category of interest

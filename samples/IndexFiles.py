@@ -36,23 +36,23 @@ class IndexFiles(object):
         writer.setMaxFieldLength(1048576)
         self.indexDocs(root, writer)
         ticker = Ticker()
-        print 'optimizing index',
+        print('optimizing index', end=' ')
         threading.Thread(target=ticker.run).start()
         writer.optimize()
         writer.close()
         ticker.tick = False
-        print 'done'
+        print('done')
 
     def indexDocs(self, root, writer):
         for root, dirnames, filenames in os.walk(root):
             for filename in filenames:
                 if not filename.endswith('.txt'):
                     continue
-                print "adding", filename
+                print("adding", filename)
                 try:
                     path = os.path.join(root, filename)
                     file = open(path)
-                    contents = unicode(file.read(), 'iso-8859-1')
+                    contents = str(file.read(), 'iso-8859-1')
                     file.close()
                     doc = lucene.Document()
                     doc.add(lucene.Field("name", filename,
@@ -66,21 +66,21 @@ class IndexFiles(object):
                                              lucene.Field.Store.NO,
                                              lucene.Field.Index.ANALYZED))
                     else:
-                        print "warning: no content in %s" % filename
+                        print("warning: no content in %s" % filename)
                     writer.addDocument(doc)
-                except Exception, e:
-                    print "Failed in indexDocs:", e
+                except Exception as e:
+                    print("Failed in indexDocs:", e)
 
 if __name__ == '__main__':
     if len(sys.argv) < 2:
-        print IndexFiles.__doc__
+        print(IndexFiles.__doc__)
         sys.exit(1)
     lucene.initVM()
-    print 'lucene', lucene.VERSION
+    print('lucene', lucene.VERSION)
     start = datetime.now()
     try:
         IndexFiles(sys.argv[1], "index", lucene.StandardAnalyzer(lucene.Version.LUCENE_CURRENT))
         end = datetime.now()
-        print end - start
-    except Exception, e:
-        print "Failed: ", e
+        print(end - start)
+    except Exception as e:
+        print("Failed: ", e)

@@ -46,10 +46,10 @@ class Test_Bug1842(unittest.TestCase):
         freqvec = reader.getTermFreqVector(topDocs.scoreDocs[0].doc, "all")
         terms = list(freqvec.getTerms())
         terms.sort()
-        self.assert_(terms == ['blah', 'gesundheit'])
+        self.assertTrue(terms == ['blah', 'gesundheit'])
 
         freqs = freqvec.getTermFrequencies()
-        self.assert_(freqs == [3, 1])
+        self.assertTrue(freqs == [3, 1])
 
 if __name__ == '__main__':
     import lucene

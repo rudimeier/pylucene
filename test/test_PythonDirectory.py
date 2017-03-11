@@ -36,7 +36,7 @@ class DebugWrapper(object):
         self.obj = obj
 
     def __getattr__(self, name):
-        print self.obj.__class__.__name__, self.obj.name, name
+        print(self.obj.__class__.__name__, self.obj.name, name)
         sys.stdout.flush()
         return getattr(self.obj, name)
         
@@ -106,7 +106,7 @@ class PythonFileStreamInput(PythonIndexInput):
         self.isClone = clone
 
     def length(self):
-        return long(self._length)
+        return int(self._length)
 
     def clone(self):
         clone = PythonFileStreamInput(self.name, self.fh, self._length, True)
@@ -142,7 +142,7 @@ class PythonFileStreamOutput(PythonIndexOutput):
             self.fh.close()
 
     def length(self):
-        return long(self._length)
+        return int(self._length)
 
     def seekInternal(self, pos):
         self.fh.seek(pos)
@@ -185,7 +185,7 @@ class PythonFileDirectory(PythonDirectory):
 
     def fileLength(self, name):
         file_path = os.path.join(self.path, name)
-        return long(os.path.getsize(file_path))
+        return int(os.path.getsize(file_path))
 
     def fileModified(self, name):
         file_path = os.path.join(self.path, name)
@@ -202,7 +202,7 @@ class PythonFileDirectory(PythonDirectory):
         try:
             fh = open(file_path, "rb")
         except IOError:
-            raise JavaError, IOException(name)
+            raise JavaError(IOException(name))
         stream = PythonFileStreamInput(name, fh, os.path.getsize(file_path))
         self._streams.append(stream)
         return stream
@@ -242,9 +242,9 @@ class PythonDirectoryTests(unittest.TestCase, test_PyLucene.Test_PyLuceneBase):
         store.close()
 
     def test_IncrementalLoop(self):
-        print "Testing Indexing Incremental Looping"
+        print("Testing Indexing Incremental Looping")
         for i in range(100):
-            print "indexing ", i
+            print("indexing ", i)
             sys.stdout.flush()
             self.test_indexDocument()
                        
@@ -259,9 +259,9 @@ if __name__ == "__main__":
                 unittest.main()
             except:
                 pass
-            print 'inputs', env._dumpRefs(True).get('class org.osafoundation.lucene.store.PythonIndexOutput', 0)
-            print 'outputs', env._dumpRefs(True).get('class org.osafoundation.lucene.store.PythonIndexInput', 0)
-            print 'locks', env._dumpRefs(True).get('class org.osafoundation.lucene.store.PythonLock', 0)
-            print 'dirs', env._dumpRefs(True).get('class org.osafoundation.lucene.store.PythonLock', 0)
+            print('inputs', env._dumpRefs(True).get('class org.osafoundation.lucene.store.PythonIndexOutput', 0))
+            print('outputs', env._dumpRefs(True).get('class org.osafoundation.lucene.store.PythonIndexInput', 0))
+            print('locks', env._dumpRefs(True).get('class org.osafoundation.lucene.store.PythonLock', 0))
+            print('dirs', env._dumpRefs(True).get('class org.osafoundation.lucene.store.PythonLock', 0))
     else:
         unittest.main()

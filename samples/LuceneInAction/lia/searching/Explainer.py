@@ -24,7 +24,7 @@ class Explainer(object):
     def main(cls, argv):
 
         if len(argv) != 3:
-            print "Usage: Explainer <index dir> <query>"
+            print("Usage: Explainer <index dir> <query>")
 
         else:
             indexDir = argv[1]
@@ -34,7 +34,7 @@ class Explainer(object):
             query = QueryParser(Version.LUCENE_CURRENT, "contents",
                                 SimpleAnalyzer()).parse(queryExpression)
 
-            print "Query:", queryExpression
+            print("Query:", queryExpression)
 
             searcher = IndexSearcher(directory)
             scoreDocs = searcher.search(query, 50).scoreDocs
@@ -42,9 +42,9 @@ class Explainer(object):
             for scoreDoc in scoreDocs:
                 doc = searcher.doc(scoreDoc.doc)
                 explanation = searcher.explain(query, scoreDoc.doc)
-                print "----------"
-                print doc["title"].encode('utf-8')
-                print explanation
+                print("----------")
+                print(doc["title"].encode('utf-8'))
+                print(explanation)
 
     main = classmethod(main)
 

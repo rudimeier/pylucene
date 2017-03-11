@@ -26,7 +26,7 @@ class Indexer(object):
     def main(cls, argv):
 
         if len(argv) != 3:
-            print "Usage: python Indexer.py <index dir> <data dir>"
+            print("Usage: python Indexer.py <index dir> <data dir>")
 
         else:
             indexDir = argv[1]
@@ -36,12 +36,12 @@ class Indexer(object):
             numIndexed = cls.index(indexDir, dataDir)
             duration = timedelta(seconds=time() - start)
 
-            print "Indexing %s files took %s" %(numIndexed, duration)
+            print("Indexing %s files took %s" %(numIndexed, duration))
 
     def index(cls, indexDir, dataDir):
 
         if not (os.path.exists(dataDir) and os.path.isdir(dataDir)):
-            raise IOError, "%s does not exist or is not a directory" %(dataDir)
+            raise IOError("%s does not exist or is not a directory" %(dataDir))
 
         dir = SimpleFSDirectory(File(indexDir))
         writer = IndexWriter(dir, StandardAnalyzer(Version.LUCENE_CURRENT),
@@ -71,10 +71,10 @@ class Indexer(object):
 
         try:
             reader = InputStreamReader(FileInputStream(path), 'iso-8859-1')
-        except IOError, e:
-            print 'IOError while opening %s: %s' %(path, e)
+        except IOError as e:
+            print('IOError while opening %s: %s' %(path, e))
         else:
-            print 'Indexing', path
+            print('Indexing', path)
             doc = Document()
             doc.add(Field("contents", reader))
             doc.add(Field("path", os.path.abspath(path),

@@ -47,7 +47,7 @@ class Digester(xml.sax.ContentHandler):
         self.path.append(tag)
         pairs = self.attributes.get('/'.join(self.path))
         if pairs is not None:
-            for name, value in attrs.items():
+            for name, value in list(attrs.items()):
                 property = pairs.get(name)
                 if property is not None:
                     self.properties[property] = value

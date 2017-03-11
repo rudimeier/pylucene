@@ -27,7 +27,7 @@ class T9er(object):
     def main(cls, argv):
         
         if len(argv) != 3:
-            print "Usage: T9er <WordNet index dir> <t9 index>"
+            print("Usage: T9er <WordNet index dir> <t9 index>")
             return
         
         for key in cls.keys:
@@ -35,7 +35,7 @@ class T9er(object):
             k = key[1:]
             for kc in k:
                 cls.keyMap[kc] = c
-                print kc, "=", c
+                print(kc, "=", c)
 
         indexDir = argv[1]
         t9dir = argv[2]
@@ -43,11 +43,11 @@ class T9er(object):
         reader = IndexReader.open(indexDir)
 
         numDocs = reader.maxDoc()
-        print "Processing", numDocs, "words"
+        print("Processing", numDocs, "words")
 
         writer = IndexWriter(t9dir, WhitespaceAnalyzer(), True)
 
-        for id in xrange(reader.maxDoc()):
+        for id in range(reader.maxDoc()):
             origDoc = reader.document(id)
             word = origDoc.get("word")
             if word is None or len(word) == 0:
@@ -62,7 +62,7 @@ class T9er(object):
                              Field.Store.NO, Field.Index.UN_TOKENIZED))
             writer.addDocument(newDoc)
             if id % 100 == 0:
-                print "Document", id
+                print("Document", id)
 
         writer.optimize()
         writer.close()

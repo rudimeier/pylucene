@@ -27,7 +27,7 @@ class PositionalStopFilter(PythonTokenFilter):
         self.input = tokenStream
         self.stopWords = stopWords
 
-    def next(self):
+    def __next__(self):
 
         increment = 0
 

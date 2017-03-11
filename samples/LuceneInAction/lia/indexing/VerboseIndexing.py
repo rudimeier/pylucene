@@ -34,7 +34,7 @@ class VerboseIndexing(object):
 
         writer.setInfoStream(System.out)
 
-        for i in xrange(100):
+        for i in range(100):
             doc = Document()
             doc.add(Field("keyword", "goober",
                              Field.Store.YES, Field.Index.UN_TOKENIZED))

@@ -44,9 +44,9 @@ class SortingExample(object):
         searcher.search(query, None, collector)
         scoreDocs = collector.topDocs().scoreDocs
 
-        print "\nResults for:", query, "sorted by", sort
-        print "Title".rjust(30), "pubmonth".rjust(10), \
-              "id".center(4), "score".center(15)
+        print("\nResults for:", query, "sorted by", sort)
+        print("Title".rjust(30), "pubmonth".rjust(10), \
+              "id".center(4), "score".center(15))
 
         scoreFormatter = DecimalFormat("0.######")
         for scoreDoc in scoreDocs:
@@ -54,11 +54,11 @@ class SortingExample(object):
             title = doc["title"]
             if len(title) > 30:
                 title = title[:30]
-            print title.encode('ascii', 'replace').rjust(30), \
+            print(title.encode('ascii', 'replace').rjust(30), \
                   doc["pubmonth"].rjust(10), \
                   str(scoreDoc.doc).center(4), \
-                  scoreFormatter.format(scoreDoc.score).ljust(12)
-            print "  ", doc["category"]
+                  scoreFormatter.format(scoreDoc.score).ljust(12))
+            print("  ", doc["category"])
             # print searcher.explain(query, scoreDoc.doc)
 
         searcher.close()

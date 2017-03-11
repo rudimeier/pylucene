@@ -47,7 +47,7 @@ def write(date, title, pending, fOut):
     docCount += 1
     del pending[:]
     if VERBOSE:
-      print len(body)
+      print(len(body))
 
 def processTar(fileName, fOut):
 
@@ -70,8 +70,8 @@ def processTar(fileName, fOut):
       date = datetime.date(year=year, month=month, day=day)
 
       if VERBOSE:
-        print
-        print '%s: %s' % (ti.name, date)
+        print()
+        print('%s: %s' % (ti.name, date))
       nextIsTitle = False
       title = None
       pending = []
@@ -87,7 +87,7 @@ def processTar(fileName, fOut):
             title = line
             nextIsTitle = False
             if VERBOSE:
-              print '  title %s' % line
+              print('  title %s' % line)
           continue
         if line.lower() == '<p>':
           if docPerParagraph:
@@ -109,10 +109,10 @@ fOut = open(fileOut, 'wb')
 
 for fileName in glob.glob('%s/??-??.tgz' % dirIn):
   if fileName.endswith('.tgz'):
-    print 'process %s; %d docs so far...' % (fileName, docCount)
+    print('process %s; %d docs so far...' % (fileName, docCount))
     processTar(fileName, fOut)
 
-print 'TOTAL: %s' % docCount
+print('TOTAL: %s' % docCount)
 
 #run something like this:
 """

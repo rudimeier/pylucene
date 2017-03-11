@@ -34,7 +34,7 @@ def indexDirectory(dir):
 def indexFile(dir,filename):
 
     path = os.path.join(dir, filename)
-    print "  File: ", filename
+    print("  File: ", filename)
 
     if filename.endswith('.gz'):
         child = Popen('gunzip -c ' + path + ' | groff -t -e -E -mandoc -Tascii | col -bx', shell=True, stdout=PIPE, cwd=os.path.dirname(dir)).stdout
@@ -47,7 +47,7 @@ def indexFile(dir,filename):
     data = child.read()
     err = child.close()
     if err:
-        raise RuntimeError, '%s failed with exit code %d' %(command, err)
+        raise RuntimeError('%s failed with exit code %d' %(command, err))
 
     matches = re.search('^NAME$(.*?)^\S', data,
                         re.MULTILINE | re.DOTALL)
@@ -81,7 +81,7 @@ def indexFile(dir,filename):
 if __name__ == '__main__':
 
     if len(sys.argv) != 2:
-        print "Usage: python manindex.py <index dir>"
+        print("Usage: python manindex.py <index dir>")
 
     else:
         initVM()
@@ -91,7 +91,7 @@ if __name__ == '__main__':
                              IndexWriter.MaxFieldLength.LIMITED)
         manpath = os.environ.get('MANPATH', '/usr/share/man').split(os.pathsep)
         for dir in manpath:
-            print "Crawling", dir
+            print("Crawling", dir)
             for name in os.listdir(dir):
                 path = os.path.join(dir, name)
                 if os.path.isdir(path):

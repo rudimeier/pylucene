@@ -31,11 +31,11 @@ class ClassLoader(object):
             raise
         except:
             x, value, traceback = sys.exc_info()
-            raise ImportError, value, traceback
+            raise ImportError(value).with_traceback(traceback)
 
         try:
             return getattr(m, name)
         except AttributeError:
-            raise ImportError, "Module %s has no class %s" %(module, name)
+            raise ImportError("Module %s has no class %s" %(module, name))
 
     loadClass = classmethod(loadClass)

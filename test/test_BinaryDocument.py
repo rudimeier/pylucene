@@ -34,7 +34,7 @@ class TestBinaryDocument(TestCase):
             # binary fields with store off are not allowed
             Field("fail", bytes, Field.Store.NO)
             self.fail()
-        except JavaError, e:
+        except JavaError as e:
             self.assertEqual(e.getJavaException().getClass().getName(),
                              'java.lang.IllegalArgumentException')
     
@@ -55,7 +55,7 @@ class TestBinaryDocument(TestCase):
         # open a reader and fetch the document
         reader = IndexReader.open(dir, False)
         docFromReader = reader.document(0)
-        self.assert_(docFromReader is not None)
+        self.assertTrue(docFromReader is not None)
     
         # fetch the binary stored field and compare it's content with the
         # original one
@@ -95,7 +95,7 @@ class TestBinaryDocument(TestCase):
         # open a reader and fetch the document
         reader = IndexReader.open(dir, False)
         docFromReader = reader.document(0)
-        self.assert_(docFromReader is not None)
+        self.assertTrue(docFromReader is not None)
     
         # fetch the binary compressed field and compare it's content with
         # the original one

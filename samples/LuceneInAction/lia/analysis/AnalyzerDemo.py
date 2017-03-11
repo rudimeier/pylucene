@@ -42,14 +42,14 @@ class AnalyzerDemo(object):
 
     def analyze(cls, text):
 
-        print 'Analyzing "%s"' %(text)
+        print('Analyzing "%s"' %(text))
 
         for analyzer in cls.analyzers:
             name = type(analyzer).__name__
-            print " %s:" %(name),
+            print(" %s:" %(name), end=' ')
             AnalyzerUtils.displayTokens(analyzer, text)
-            print
-        print
+            print()
+        print()
 
     main = classmethod(main)
     analyze = classmethod(analyze)

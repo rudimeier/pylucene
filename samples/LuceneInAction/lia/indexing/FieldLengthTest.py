@@ -14,7 +14,7 @@
 
 import os
 
-from itertools import izip
+
 from unittest import TestCase
 from time import time
 from datetime import timedelta
@@ -62,7 +62,7 @@ class FieldLengthTest(TestCase):
                              IndexWriter.MaxFieldLength(maxFieldLength))
         
         for keyword, unindexed, unstored, text in \
-                izip(self.keywords, self.unindexed, self.unstored, self.text):
+                zip(self.keywords, self.unindexed, self.unstored, self.text):
             doc = Document()
             doc.add(Field("id", keyword,
                           Field.Store.YES, Field.Index.NOT_ANALYZED))

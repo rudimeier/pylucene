@@ -25,7 +25,7 @@ class Test_Bug1564(unittest.TestCase):
         writer = IndexWriter(self.store, self.analyzer, True,
                              IndexWriter.MaxFieldLength.LIMITED)
         doc = Document()
-        doc.add(Field('all', u'windowpane beplaster rapacious \
+        doc.add(Field('all', 'windowpane beplaster rapacious \
         catatonia gauntlet wynn depressible swede pick dressmake supreme \
         jeremy plumb theoretic bureaucracy causation chartres equipoise \
         dispersible careen heard',

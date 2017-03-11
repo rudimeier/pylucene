@@ -37,7 +37,7 @@ class DigesterXMLHandler(object):
 
         try:
             file = open(path)
-        except IOError, e:
+        except IOError as e:
             raise
         else:
             props = self.digester.parse(file)

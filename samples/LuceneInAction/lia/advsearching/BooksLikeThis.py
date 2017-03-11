@@ -29,19 +29,19 @@ class BooksLikeThis(object):
         reader = IndexReader.open(directory, True)
         blt = BooksLikeThis(reader)
 
-        for id in xrange(reader.maxDoc()):
+        for id in range(reader.maxDoc()):
             if reader.isDeleted(id):
                 continue
             doc = reader.document(id)
-            print ''
-            print doc.get("title").encode('utf-8')
+            print('')
+            print(doc.get("title").encode('utf-8'))
 
             docs = blt.docsLike(id, doc, 10)
             if not docs:
-                print "  None like this"
+                print("  None like this")
             else:
                 for doc in docs:
-                    print " ->", doc.get("title").encode('utf-8')
+                    print(" ->", doc.get("title").encode('utf-8'))
 
     def __init__(self, reader):
 
@@ -72,7 +72,7 @@ class BooksLikeThis(object):
         likeThisQuery.add(TermQuery(Term("isbn", doc.get("isbn"))),
                           BooleanClause.Occur.MUST_NOT)
 
-        print "  Query:", likeThisQuery.toString("contents")
+        print("  Query:", likeThisQuery.toString("contents"))
         scoreDocs = self.searcher.search(likeThisQuery, 50).scoreDocs
 
         docs = []

@@ -37,16 +37,16 @@ class CategorizerTest(LiaTestCase):
 
     def dumpCategoryVectors(self):
 
-        for category, vectorMap in self.categoryMap.iteritems():
-            print "Category", category
-            for term, freq in vectorMap.iteritems():
-                print "   ", term, "=", freq
+        for category, vectorMap in self.categoryMap.items():
+            print("Category", category)
+            for term, freq in vectorMap.items():
+                print("   ", term, "=", freq)
 
     def buildCategoryVectors(self):
 
         reader = IndexReader.open(self.directory, True)
 
-        for id in xrange(reader.maxDoc()):
+        for id in range(reader.maxDoc()):
             doc = reader.document(id)
             category = doc.get("category")
             vectorMap = self.categoryMap.get(category, None)
@@ -76,7 +76,7 @@ class CategorizerTest(LiaTestCase):
         bestAngle = 2 * pi
         bestCategory = None
 
-        for category, vectorMap in self.categoryMap.iteritems():
+        for category, vectorMap in self.categoryMap.items():
             angle = self.computeAngle(words, category, vectorMap)
             if angle != 'nan' and angle < bestAngle:
                 bestAngle = angle

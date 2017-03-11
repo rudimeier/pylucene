@@ -34,4 +34,4 @@ class PrefixQueryTest(LiaTestCase):
         topDocs = searcher.search(TermQuery(term), 50)
         justProgramming = topDocs.totalHits
 
-        self.assert_(programmingAndBelow > justProgramming)
+        self.assertTrue(programmingAndBelow > justProgramming)

@@ -28,7 +28,7 @@ class KeywordAnalyzer(PythonAnalyzer):
                 super(_tokenStream, self).__init__()
                 self.done = False
       
-            def next(self):
+            def __next__(self):
                 if not self.done:
                     self.done = True
                     text = JArray('char')(1024)

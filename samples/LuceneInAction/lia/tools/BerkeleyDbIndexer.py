@@ -30,7 +30,7 @@ class BerkeleyDbIndexer(object):
     def main(cls, argv):
 
         if len(argv) < 2:
-            print "Usage: BerkeleyDbIndexer <index dir> -create"
+            print("Usage: BerkeleyDbIndexer <index dir> -create")
             return
 
         dbHome = argv[1]
@@ -48,7 +48,7 @@ class BerkeleyDbIndexer(object):
         if os.name == 'nt':
             env.set_cachesize(0, 0x4000000, 1)
         elif os.name == 'posix':
-            from commands import getstatusoutput
+            from subprocess import getstatusoutput
             if getstatusoutput('uname') == (0, 'Linux'):
                 env.set_cachesize(0, 0x4000000, 1)
 
@@ -99,6 +99,6 @@ class BerkeleyDbIndexer(object):
             blocks.close()
             env.close()
 
-        print "Indexing Complete"
+        print("Indexing Complete")
 
     main = classmethod(main)

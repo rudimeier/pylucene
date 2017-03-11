@@ -39,7 +39,7 @@ class PDFHandler(object):
 
             exitCode = process.wait()
             if exitCode != 0:
-                raise RuntimeError, "pdfinfo exit code %d" %(exitCode)
+                raise RuntimeError("pdfinfo exit code %d" %(exitCode))
         
         try:
             process = popen2.Popen4(["pdftotext", "-enc", "UTF-8", path, "-"])
@@ -54,6 +54,6 @@ class PDFHandler(object):
 
             exitCode = process.wait()
             if exitCode != 0:
-                raise RuntimeError, "pdftotext exit code %d" %(exitCode)
+                raise RuntimeError("pdftotext exit code %d" %(exitCode))
 
             return doc

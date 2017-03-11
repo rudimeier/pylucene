@@ -12,8 +12,8 @@
 #   limitations under the License.
 # ====================================================================
 
-from StringIO import StringIO
-from HTMLParser import HTMLParser
+from io import StringIO
+from html.parser import HTMLParser
 
 
 class InputStreamReader(object):
@@ -31,7 +31,7 @@ class InputStreamReader(object):
     def read(self, length=-1):
 
         text = self._read(length)
-        text = unicode(text, self.encoding)
+        text = str(text, self.encoding)
 
         return text
 

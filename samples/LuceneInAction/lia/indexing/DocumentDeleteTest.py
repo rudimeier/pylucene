@@ -25,8 +25,8 @@ class DocumentDeleteTest(BaseIndexingTestCase):
         self.assertEqual(2, reader.numDocs())
         reader.deleteDocument(1)
 
-        self.assert_(reader.isDeleted(1))
-        self.assert_(reader.hasDeletions())
+        self.assertTrue(reader.isDeleted(1))
+        self.assertTrue(reader.hasDeletions())
         self.assertEqual(2, reader.maxDoc())
         self.assertEqual(1, reader.numDocs())
 
@@ -54,8 +54,8 @@ class DocumentDeleteTest(BaseIndexingTestCase):
 
         reader = IndexReader.open(self.dir, True)
 
-        self.assert_(not reader.isDeleted(1))
-        self.assert_(not reader.hasDeletions())
+        self.assertTrue(not reader.isDeleted(1))
+        self.assertTrue(not reader.hasDeletions())
         self.assertEqual(1, reader.maxDoc())
         self.assertEqual(1, reader.numDocs())
 

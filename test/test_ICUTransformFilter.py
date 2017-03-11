@@ -18,7 +18,7 @@
 
 try:
     from icu import Transliterator, UTransDirection
-except ImportError, e:
+except ImportError as e:
     pass
 
 from unittest import main
@@ -43,17 +43,17 @@ class TestICUTransformFilter(BaseTokenStreamTestCase):
     def testBasicFunctionality(self):
 
         self._checkToken(self._getTransliterator("Traditional-Simplified"), 
-                         u"簡化字", u"简化字")
+                         "簡化字", "简化字")
         self._checkToken(self._getTransliterator("Katakana-Hiragana"),
-                         u"ヒラガナ", u"ひらがな")
+                         "ヒラガナ", "ひらがな")
         self._checkToken(self._getTransliterator("Fullwidth-Halfwidth"), 
-                         u"アルアノリウ", u"ｱﾙｱﾉﾘｳ")
+                         "アルアノリウ", "ｱﾙｱﾉﾘｳ")
         self._checkToken(self._getTransliterator("Any-Latin"), 
-                         u"Αλφαβητικός Κατάλογος", u"Alphabētikós Katálogos")
+                         "Αλφαβητικός Κατάλογος", "Alphabētikós Katálogos")
         self._checkToken(self._getTransliterator("NFD; [:Nonspacing Mark:] Remove"), 
-                         u"Alphabētikós Katálogos", u"Alphabetikos Katalogos")
+                         "Alphabētikós Katálogos", "Alphabetikos Katalogos")
         self._checkToken(self._getTransliterator("Han-Latin"),
-                         u"中国", u"zhōng guó")
+                         "中国", "zhōng guó")
   
     def testCustomFunctionality(self):
 

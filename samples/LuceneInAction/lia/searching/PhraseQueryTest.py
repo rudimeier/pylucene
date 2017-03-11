@@ -51,26 +51,26 @@ class PhraseQueryTest(TestCase):
 
         phrase = ["quick", "fox"]
 
-        self.assert_(not self.matched(phrase, 0), "exact phrase not found")
-        self.assert_(self.matched(phrase, 1), "close enough")
+        self.assertTrue(not self.matched(phrase, 0), "exact phrase not found")
+        self.assertTrue(self.matched(phrase, 1), "close enough")
 
     def testReverse(self):
 
         phrase = ["fox", "quick"]
 
-        self.assert_(not self.matched(phrase, 2), "hop flop")
-        self.assert_(self.matched(phrase, 3), "hop hop slop")
+        self.assertTrue(not self.matched(phrase, 2), "hop flop")
+        self.assertTrue(self.matched(phrase, 3), "hop hop slop")
 
     def testMultiple(self):
 
-        self.assert_(not self.matched(["quick", "jumped", "lazy"], 3),
+        self.assertTrue(not self.matched(["quick", "jumped", "lazy"], 3),
                      "not close enough")
 
-        self.assert_(self.matched(["quick", "jumped", "lazy"], 4),
+        self.assertTrue(self.matched(["quick", "jumped", "lazy"], 4),
                      "just enough")
 
-        self.assert_(not self.matched(["lazy", "jumped", "quick"], 7),
+        self.assertTrue(not self.matched(["lazy", "jumped", "quick"], 7),
                      "almost but not quite")
 
-        self.assert_(self.matched(["lazy", "jumped", "quick"], 8),
+        self.assertTrue(self.matched(["lazy", "jumped", "quick"], 8),
                      "bingo")

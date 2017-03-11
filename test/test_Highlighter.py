@@ -65,7 +65,7 @@ class HighlighterTestCase(TestCase):
             result = highlighter.getBestFragments(tokenStream, text,
                                                   maxNumFragmentsRequired,
                                                   "...")
-            print "\t", result
+            print("\t", result)
 
         # Not sure we can assert anything here - just running to check we don't
         # throw any exceptions
@@ -74,7 +74,7 @@ class HighlighterTestCase(TestCase):
 
         self.doSearching("Wicked")
         self.doStandardHighlights()
-        self.assert_(self.numHighlights == 3,
+        self.assertTrue(self.numHighlights == 3,
                      ("Failed to find correct number of highlights, %d found"
                       %(self.numHighlights)))
         
@@ -86,7 +86,7 @@ class HighlighterTestCase(TestCase):
         # fuzzy etc) you must use a rewritten query!
         self.query = self.query.rewrite(self.reader)
 
-        print "Searching for:", self.query.toString(self.FIELD_NAME)
+        print("Searching for:", self.query.toString(self.FIELD_NAME))
         self.scoreDocs = self.searcher.search(self.query, 100).scoreDocs
         self.numHighlights = 0
 
@@ -107,7 +107,7 @@ class HighlighterTestCase(TestCase):
                                                   text,
                                                   maxNumFragmentsRequired,
                                                   fragmentSeparator)
-            print "\t", result
+            print("\t", result)
             
     def countHighlightTerm(self):
 

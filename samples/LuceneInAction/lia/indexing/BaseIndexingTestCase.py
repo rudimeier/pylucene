@@ -51,7 +51,7 @@ class BaseIndexingTestCase(TestCase):
                              IndexWriter.MaxFieldLength.UNLIMITED)
         writer.setUseCompoundFile(self.isCompound())
 
-        for i in xrange(len(self.keywords)):
+        for i in range(len(self.keywords)):
             doc = Document()
             doc.add(Field("id", self.keywords[i],
                           Field.Store.YES, Field.Index.NOT_ANALYZED))

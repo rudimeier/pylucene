@@ -56,10 +56,10 @@ class CompoundVersusMultiFileIndexTest(TestCase):
         cTiming = self.timeIndexWriter(self.cDir, True)
         mTiming = self.timeIndexWriter(self.mDir, False)
 
-        print "Compound Time :", cTiming
-        print "Multi-file Time:", mTiming
+        print("Compound Time :", cTiming)
+        print("Multi-file Time:", mTiming)
 
-        self.assert_(cTiming > mTiming)
+        self.assertTrue(cTiming > mTiming)
 
     def timeIndexWriter(self, dir, isCompound):
 

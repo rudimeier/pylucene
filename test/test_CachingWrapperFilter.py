@@ -47,12 +47,12 @@ class CachingWrapperFilterTestCase(TestCase):
 
         # first time, nested filter is called
         cacher.getDocIdSet(reader)
-        self.assert_(filter.wasCalled(), "first time")
+        self.assertTrue(filter.wasCalled(), "first time")
 
         # second time, nested filter should not be called
         filter.clear()
         cacher.getDocIdSet(reader)
-        self.assert_(not filter.wasCalled(), "second time")
+        self.assertTrue(not filter.wasCalled(), "second time")
 
         reader.close()
 

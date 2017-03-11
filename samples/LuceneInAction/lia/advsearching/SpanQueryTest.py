@@ -13,7 +13,7 @@
 # ====================================================================
 
 from unittest import TestCase
-from cStringIO import StringIO
+from io import StringIO
 
 from lucene import \
      WhitespaceAnalyzer, Document, Field, IndexReader, IndexWriter, Term, \
@@ -71,7 +71,7 @@ class SpanQueryTest(TestCase):
     def assertNoMatches(self, query):
 
         topDocs = self.searcher.search(query, 50)
-        self.assertEquals(0, topDocs.totalHits)
+        self.assertEqual(0, topDocs.totalHits)
 
     def testSpanTermQuery(self):
 
@@ -167,7 +167,7 @@ class SpanQueryTest(TestCase):
     def dumpSpans(self, query):
 
         spans = query.getSpans(self.reader)
-        print "%s:" % query
+        print("%s:" % query)
         numSpans = 0
 
         scoreDocs = self.searcher.search(query, 50).scoreDocs
@@ -175,7 +175,7 @@ class SpanQueryTest(TestCase):
         for scoreDoc in scoreDocs:
             scores[scoreDoc.doc] = scoreDoc.score
 
-        while spans.next():
+        while next(spans):
             numSpans += 1
 
             id = spans.doc()
@@ -206,10 +206,10 @@ class SpanQueryTest(TestCase):
             buffer.write(str(scores[id]))
             buffer.write(") ")
 
-            print buffer.getvalue()
+            print(buffer.getvalue())
             # print self.searcher.explain(query, id)
 
         if numSpans == 0:
-            print "   No spans"
+            print("   No spans")
 
-        print ''
+        print('')

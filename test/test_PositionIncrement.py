@@ -65,12 +65,12 @@ class PositionIncrementTestCase(TestCase):
         searcher = IndexSearcher(store, True)
 
         pos = searcher.getIndexReader().termPositions(Term("field", "1"))
-        pos.next()
+        next(pos)
         # first token should be at position 0
         self.assertEqual(0, pos.nextPosition())
     
         pos = searcher.getIndexReader().termPositions(Term("field", "2"))
-        pos.next()
+        next(pos)
         # second token should be at position 2
         self.assertEqual(2, pos.nextPosition())
     
@@ -206,7 +206,7 @@ class PositionIncrementTestCase(TestCase):
 
         tp = r.termPositions(Term("content", "a"))
         count = 0
-        self.assert_(tp.next())
+        self.assertTrue(next(tp))
         # "a" occurs 4 times
         self.assertEqual(4, tp.freq())
 
@@ -217,7 +217,7 @@ class PositionIncrementTestCase(TestCase):
         self.assertEqual(6, tp.nextPosition())
 
         # only one doc has "a"
-        self.assert_(not tp.next())
+        self.assertTrue(not next(tp))
 
         searcher = IndexSearcher(r)
     
@@ -230,27 +230,27 @@ class PositionIncrementTestCase(TestCase):
         sawZero = False
 
         pspans = snq.getSpans(searcher.getIndexReader())
-        while pspans.next():
+        while next(pspans):
             payloads = pspans.getPayload()
             sawZero |= pspans.start() == 0
 
             it = payloads.iterator()
             while it.hasNext():
                 count += 1
-                it.next()
+                next(it)
 
         self.assertEqual(5, count)
-        self.assert_(sawZero)
+        self.assertTrue(sawZero)
 
         spans = snq.getSpans(searcher.getIndexReader())
         count = 0
         sawZero = False
-        while spans.next():
+        while next(spans):
             count += 1
             sawZero |= spans.start() == 0
 
         self.assertEqual(4, count)
-        self.assert_(sawZero)
+        self.assertTrue(sawZero)
 		
         sawZero = False
         psu = PayloadSpanUtil(searcher.getIndexReader())
@@ -258,12 +258,12 @@ class PositionIncrementTestCase(TestCase):
         count = pls.size()
         it = pls.iterator()
         while it.hasNext():
-            bytes = JArray('byte').cast_(it.next())
+            bytes = JArray('byte').cast_(next(it))
             s = bytes.string_
             sawZero |= s == "pos: 0"
 
         self.assertEqual(5, count)
-        self.assert_(sawZero)
+        self.assertTrue(sawZero)
         writer.close()
         searcher.getIndexReader().close()
         dir.close()

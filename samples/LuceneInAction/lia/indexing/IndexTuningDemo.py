@@ -26,7 +26,7 @@ class IndexTuningDemo(object):
     def main(cls, argv):
 
         if len(argv) < 5:
-            print "Usage: python IndexTuningDemo.py <numDocs> <mergeFactor> <maxMergeDocs> <maxBufferedDocs>"
+            print("Usage: python IndexTuningDemo.py <numDocs> <mergeFactor> <maxMergeDocs> <maxBufferedDocs>")
             return
             
         docsInIndex  = int(argv[1])
@@ -44,18 +44,18 @@ class IndexTuningDemo(object):
         writer.setMaxBufferedDocs(int(argv[4]))
         # writer.infoStream = System.out
 
-        print "Merge factor:  ", writer.getMergeFactor()
-        print "Max merge docs:", writer.getMaxMergeDocs()
-        print "Max buffered docs:", writer.getMaxBufferedDocs()
+        print("Merge factor:  ", writer.getMergeFactor())
+        print("Max merge docs:", writer.getMaxMergeDocs())
+        print("Max buffered docs:", writer.getMaxBufferedDocs())
 
         start = time()
-        for i in xrange(docsInIndex):
+        for i in range(docsInIndex):
             doc = Document()
             doc.add(Field("fieldname", "Bibamus",
                           Field.Store.YES, Field.Index.TOKENIZED))
             writer.addDocument(doc)
 
         writer.close()
-        print "Time: ", timedelta(seconds=time() - start)
+        print("Time: ", timedelta(seconds=time() - start))
 
     main = classmethod(main)

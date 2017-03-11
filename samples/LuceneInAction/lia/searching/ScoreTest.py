@@ -63,7 +63,7 @@ class ScoreTest(LiaTestCase):
 
         query = TermQuery(Term("contents", "x"))
         explanation = searcher.explain(query, 0)
-        print explanation
+        print(explanation)
 
         scoreDocs = searcher.search(query, 50).scoreDocs
         self.assertEqual(1, len(scoreDocs))
@@ -117,7 +117,7 @@ class ScoreTest(LiaTestCase):
         scoreDocs = searcher.search(query, 50).scoreDocs
         self.assertEqual(2, len(scoreDocs), "both close enough")
 
-        self.assert_(scoreDocs[0].score != scoreDocs[1].score,
+        self.assertTrue(scoreDocs[0].score != scoreDocs[1].score,
                      "wuzzy closer than fuzzy")
         self.assertEqual("wuzzy",
                          searcher.doc(scoreDocs[0].doc).get("contents"),

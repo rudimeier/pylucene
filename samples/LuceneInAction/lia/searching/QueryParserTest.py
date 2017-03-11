@@ -45,7 +45,7 @@ class QueryParserTest(LiaTestCase):
                              StandardAnalyzer(Version.LUCENE_CURRENT))
         parser.setLowercaseExpandedTerms(False)
 
-        print parser.parse("/Computers/technology*").toString("category")
+        print(parser.parse("/Computers/technology*").toString("category"))
 
     def testGrouping(self):
 
@@ -62,7 +62,7 @@ class QueryParserTest(LiaTestCase):
 
         query = QueryParser(Version.LUCENE_CURRENT, "subject",
                             self.analyzer).parse("title2:[K TO N]")
-        self.assert_(TermRangeQuery.instance_(query))
+        self.assertTrue(TermRangeQuery.instance_(query))
 
         scoreDocs = self.searcher.search(query, 10).scoreDocs
         self.assertHitsIncludeTitle(self.searcher, scoreDocs, "Mindstorms")
@@ -82,10 +82,10 @@ class QueryParserTest(LiaTestCase):
         parser = QueryParser(Version.LUCENE_CURRENT, "subject", self.analyzer)
         parser.setLocale(Locale.US)
         query = parser.parse(expression)
-        print expression, "parsed to", query
+        print(expression, "parsed to", query)
 
         topDocs = self.searcher.search(query, 50)
-        self.assert_(topDocs.totalHits > 0)
+        self.assertTrue(topDocs.totalHits > 0)
 
     def testSlop(self):
 
@@ -109,7 +109,7 @@ class QueryParserTest(LiaTestCase):
 
         q = QueryParser(Version.LUCENE_CURRENT, "field",
                         self.analyzer).parse('"term"')
-        self.assert_(TermQuery.instance_(q), "reduced to TermQuery")
+        self.assertTrue(TermQuery.instance_(q), "reduced to TermQuery")
 
     def testLowercasing(self):
 
@@ -129,7 +129,7 @@ class QueryParserTest(LiaTestCase):
                         self.analyzer).parse("*xyz")
             self.fail("Leading wildcard character should not be allowed")
         except:
-            self.assert_(True)
+            self.assertTrue(True)
 
     def testBoost(self):
 
@@ -144,6 +144,6 @@ class QueryParserTest(LiaTestCase):
                         self.analyzer).parse("^&#")
         except:
             # expression is invalid, as expected
-            self.assert_(True)
+            self.assertTrue(True)
         else:
             self.fail("ParseException expected, but not thrown")

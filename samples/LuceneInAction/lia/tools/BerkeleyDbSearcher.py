@@ -29,7 +29,7 @@ class BerkeleyDbSearcher(object):
     def main(cls, argv):
 
         if len(argv) != 2:
-            print "Usage: BerkeleyDbSearcher <index dir>"
+            print("Usage: BerkeleyDbSearcher <index dir>")
             return
 
         dbHome = argv[1]
@@ -39,7 +39,7 @@ class BerkeleyDbSearcher(object):
         if os.name == 'nt':
             env.set_cachesize(0, 0x4000000, 1)
         elif os.name == 'posix':
-            from commands import getstatusoutput
+            from subprocess import getstatusoutput
             if getstatusoutput('uname') == (0, 'Linux'):
                 env.set_cachesize(0, 0x4000000, 1)
 
@@ -71,7 +71,7 @@ class BerkeleyDbSearcher(object):
             searcher = IndexSearcher(directory, True)
 
             topDocs = searcher.search(TermQuery(Term("contents", "fox")), 50)
-            print topDocs.totalHits, "document(s) found"
+            print(topDocs.totalHits, "document(s) found")
             searcher.close()
         except:
             if txn is not None:

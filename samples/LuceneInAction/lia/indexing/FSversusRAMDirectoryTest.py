@@ -53,8 +53,8 @@ class FSversusRAMDirectoryTest(TestCase):
 
         #self.assert_(fsTiming > ramTiming)
 
-        print "RAMDirectory Time:", ramTiming
-        print "FSDirectory Time :", fsTiming
+        print("RAMDirectory Time:", ramTiming)
+        print("FSDirectory Time :", fsTiming)
 
     def timeIndexWriter(self, dir):
 

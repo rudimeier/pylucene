@@ -15,28 +15,28 @@ some cases.
 """
 def run(searcher, analyzer):
     while True:
-        print
-        print "Hit enter with no input to quit."
-        command = raw_input("Query:")
+        print()
+        print("Hit enter with no input to quit.")
+        command = input("Query:")
         if command == '':
             return
 
-        print
-        print "Searching for:", command
+        print()
+        print("Searching for:", command)
         query = QueryParser(Version.LUCENE_CURRENT, "contents",
                             analyzer).parse(command)
         scoreDocs = searcher.search(query, 50).scoreDocs
-        print "%s total matching documents." % len(scoreDocs)
+        print("%s total matching documents." % len(scoreDocs))
 
         for scoreDoc in scoreDocs:
             doc = searcher.doc(scoreDoc.doc)
-            print 'path:', doc.get("path"), 'name:', doc.get("name")
+            print('path:', doc.get("path"), 'name:', doc.get("name"))
 
 
 if __name__ == '__main__':
     STORE_DIR = "index"
     initVM()
-    print 'lucene', VERSION
+    print('lucene', VERSION)
     directory = SimpleFSDirectory(File(STORE_DIR))
     searcher = IndexSearcher(directory, True)
     analyzer = StandardAnalyzer(Version.LUCENE_CURRENT)
