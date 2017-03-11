@@ -21,10 +21,13 @@ try:
 except ImportError, e:
     pass
 
-from unittest import main
+import sys, lucene, unittest
 from BaseTokenStreamTestCase import BaseTokenStreamTestCase
 
-from lucene import *
+from org.apache.lucene.analysis import Analyzer
+from org.apache.lucene.util import Version
+from org.apache.lucene.analysis.core import WhitespaceTokenizer
+from org.apache.pylucene.analysis import PythonAnalyzer
 
 
 class TestICUFoldingFilter(BaseTokenStreamTestCase):
@@ -34,8 +37,9 @@ class TestICUFoldingFilter(BaseTokenStreamTestCase):
         from lucene.ICUFoldingFilter import ICUFoldingFilter
 
         class _analyzer(PythonAnalyzer):
-            def tokenStream(_self, fieldName, reader):
-                return ICUFoldingFilter(WhitespaceTokenizer(Version.LUCENE_CURRENT, reader))
+            def createComponents(_self, fieldName, reader):
+                source = WhitespaceTokenizer(Version.LUCENE_CURRENT, reader)
+                return Analyzer.TokenStreamComponents(source, ICUFoldingFilter(source))
 
         a = _analyzer()
 
@@ -73,22 +77,21 @@ class TestICUFoldingFilter(BaseTokenStreamTestCase):
 
 
 if __name__ == "__main__":
-    import sys, lucene
     try:
         import icu
     except ImportError:
         pass
     else:
-        if icu.ICU_VERSION < '49':
-            lucene.initVM()
+        if icu.ICU_VERSION >= '49':
+            lucene.initVM(vmargs=['-Djava.awt.headless=true'])
             if '-loop' in sys.argv:
                 sys.argv.remove('-loop')
                 while True:
                     try:
-                        main()
+                        unittest.main()
                     except:
                         pass
             else:
-                 main()
+                 unittest.main()
         else:
-            print >>sys.stderr, "ICU version < 49 is required, running:", icu.ICU_VERSION
+            print >>sys.stderr, "ICU version >= 49 is required, running:", icu.ICU_VERSION

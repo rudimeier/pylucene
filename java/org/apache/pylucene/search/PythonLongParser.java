@@ -15,7 +15,12 @@
 
 package org.apache.pylucene.search;
 
+import java.io.IOException;
+
+import org.apache.lucene.index.Terms;
+import org.apache.lucene.index.TermsEnum;
 import org.apache.lucene.search.FieldCache;
+import org.apache.lucene.util.BytesRef;
 
 /**
  * @author Andi Vajda
@@ -45,5 +50,7 @@ public class PythonLongParser implements FieldCache.LongParser {
     }
 
     public native void pythonDecRef();
-    public native long parseLong(String ref);
+    public native long parseLong(BytesRef ref);
+    public native TermsEnum termsEnum(Terms terms)
+        throws IOException;
 }

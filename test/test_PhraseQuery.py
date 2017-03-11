@@ -12,36 +12,37 @@
 #   limitations under the License.
 # ====================================================================
 
-from unittest import TestCase, main
-from lucene import *
+import sys, lucene, unittest
+from PyLuceneTestCase import PyLuceneTestCase
+
+from org.apache.lucene.analysis import Analyzer
+from org.apache.lucene.analysis.core import LowerCaseTokenizer, StopAnalyzer
+from org.apache.lucene.analysis.tokenattributes import CharTermAttribute
+from org.apache.lucene.document import Document, Field, TextField
+from org.apache.lucene.index import Term
+from org.apache.lucene.search import \
+    BooleanClause, BooleanQuery, PhraseQuery, TermQuery
+from org.apache.lucene.util import Version
+from org.apache.pylucene.analysis import \
+    PythonAnalyzer, PythonFilteringTokenFilter
 
 
-class PhraseQueryTestCase(TestCase):
+class PhraseQueryTestCase(PyLuceneTestCase):
     """
     Unit tests ported from Java Lucene
     """
 
     def setUp(self):
+        super(PhraseQueryTestCase, self).setUp()
 
-        self.directory = RAMDirectory()
-        writer = IndexWriter(self.directory, WhitespaceAnalyzer(), True,
-                             IndexWriter.MaxFieldLength.LIMITED)
-    
         doc = Document()
-        doc.add(Field("field", "one two three four five",
-                      Field.Store.YES, Field.Index.ANALYZED))
+        doc.add(Field("field", "one two three four five", TextField.TYPE_STORED))
+        writer = self.getWriter()
         writer.addDocument(doc)
-    
-        writer.optimize()
         writer.close()
-
-        self.searcher = IndexSearcher(self.directory, True)
+        
+        self.searcher = self.getSearcher()
         self.query = PhraseQuery()
-
-    def tearDown(self):
-
-        self.searcher.close()
-        self.directory.close()
 
     def testNotCloseEnough(self):
 
@@ -112,7 +113,7 @@ class PhraseQueryTestCase(TestCase):
         topDocs = self.searcher.search(self.query, 50)
         self.assertEqual(0, topDocs.totalHits, "not sloppy enough")
 
-    def testMulipleTerms(self):
+    def testMultipleTerms(self):
         """
         slop is the total number of positional moves allowed
         to line up a phrase
@@ -139,59 +140,37 @@ class PhraseQueryTestCase(TestCase):
 
     def testPhraseQueryWithStopAnalyzer(self):
 
-        directory = RAMDirectory()
-        stopAnalyzer = StopAnalyzer(Version.LUCENE_24)
-        writer = IndexWriter(directory, stopAnalyzer, True,
-                             IndexWriter.MaxFieldLength.LIMITED)
+        writer = self.getWriter(analyzer=StopAnalyzer(Version.LUCENE_CURRENT))
         doc = Document()
-        doc.add(Field("field", "the stop words are here",
-                      Field.Store.YES, Field.Index.ANALYZED))
+        doc.add(Field("field", "the stop words are here", TextField.TYPE_STORED))
         writer.addDocument(doc)
         writer.close()
 
-        searcher = IndexSearcher(directory, True)
+        searcher = self.getSearcher()
 
         # valid exact phrase query
         query = PhraseQuery()
-        query.add(Term("field","stop"))
-        query.add(Term("field","words"))
-        topDocs = searcher.search(query, 50)
-        self.assertEqual(1, topDocs.totalHits)
-
-        # currently StopAnalyzer does not leave "holes", so this matches.
-        query = PhraseQuery()
+        query.add(Term("field", "stop"))
         query.add(Term("field", "words"))
-        query.add(Term("field", "here"))
-        topDocs = searcher.search(query, 50)
-        self.assertEqual(1, topDocs.totalHits)
-
-        searcher.close()
+        scoreDocs = searcher.search(query, None, 50).scoreDocs
+        self.assertEqual(1, len(scoreDocs))
   
     def testPhraseQueryInConjunctionScorer(self):
 
-        directory = RAMDirectory()
-        writer = IndexWriter(directory, WhitespaceAnalyzer(), True,
-                             IndexWriter.MaxFieldLength.LIMITED)
+        writer = self.getWriter()
     
         doc = Document()
-        doc.add(Field("source", "marketing info",
-                      Field.Store.YES, Field.Index.ANALYZED,
-                      Field.TermVector.YES))
+        doc.add(Field("source", "marketing info", TextField.TYPE_STORED))
         writer.addDocument(doc)
     
         doc = Document()
-        doc.add(Field("contents", "foobar",
-                      Field.Store.YES, Field.Index.ANALYZED,
-                      Field.TermVector.YES))
-        doc.add(Field("source", "marketing info",
-                      Field.Store.YES, Field.Index.ANALYZED,
-                      Field.TermVector.YES))
+        doc.add(Field("contents", "foobar", TextField.TYPE_STORED))
+        doc.add(Field("source", "marketing info", TextField.TYPE_STORED))
         writer.addDocument(doc)
     
-        writer.optimize()
         writer.close()
-    
-        searcher = IndexSearcher(directory, True)
+        
+        searcher = self.getSearcher()
     
         phraseQuery = PhraseQuery()
         phraseQuery.add(Term("source", "marketing"))
@@ -206,32 +185,23 @@ class PhraseQueryTestCase(TestCase):
         topDocs = searcher.search(booleanQuery, 50)
         self.assertEqual(1, topDocs.totalHits)
     
-        searcher.close()
-    
-        writer = IndexWriter(directory, WhitespaceAnalyzer(), True,
-                             IndexWriter.MaxFieldLength.LIMITED)
+        writer = self.getWriter()
+        
         doc = Document()
-        doc.add(Field("contents", "map entry woo",
-                      Field.Store.YES, Field.Index.ANALYZED,
-                      Field.TermVector.YES))
+        doc.add(Field("contents", "map entry woo", TextField.TYPE_STORED))
         writer.addDocument(doc)
 
         doc = Document()
-        doc.add(Field("contents", "woo map entry",
-                      Field.Store.YES, Field.Index.ANALYZED,
-                      Field.TermVector.YES))
+        doc.add(Field("contents", "woo map entry", TextField.TYPE_STORED))
         writer.addDocument(doc)
 
         doc = Document()
-        doc.add(Field("contents", "map foobarword entry woo",
-                      Field.Store.YES, Field.Index.ANALYZED,
-                      Field.TermVector.YES))
+        doc.add(Field("contents", "map foobarword entry woo", TextField.TYPE_STORED))
         writer.addDocument(doc)
 
-        writer.optimize()
         writer.close()
-    
-        searcher = IndexSearcher(directory, True)
+        
+        searcher = self.getSearcher()
     
         termQuery = TermQuery(Term("contents", "woo"))
         phraseQuery = PhraseQuery()
@@ -254,20 +224,16 @@ class PhraseQueryTestCase(TestCase):
         booleanQuery.add(termQuery, BooleanClause.Occur.MUST)
         topDocs = searcher.search(booleanQuery, 50)
         self.assertEqual(2, topDocs.totalHits)
-    
-        searcher.close()
-        directory.close()
 
 
 if __name__ == "__main__":
-    import sys, lucene
-    lucene.initVM()
+    lucene.initVM(vmargs=['-Djava.awt.headless=true'])
     if '-loop' in sys.argv:
         sys.argv.remove('-loop')
         while True:
             try:
-                main()
+                unittest.main()
             except:
                 pass
     else:
-         main()
+         unittest.main()

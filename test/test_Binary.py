@@ -14,16 +14,19 @@
 
 # test PyLucene binary field
 
-from unittest import TestCase, main
-from lucene import Field, JArray
+import sys, lucene, unittest
+from lucene import JArray
 
-class BinaryTestCase(TestCase):
+from org.apache.lucene.document import StoredField
+
+
+class BinaryTestCase(unittest.TestCase):
 
     def binary(self, b):
 
         c = JArray('byte')(b)
-        field = Field("bin", c, Field.Store.YES)
-        v = field.binaryValue
+        field = StoredField("bin", c)
+        v = field.binaryValue().bytes
         assert c == v and b == [a for a in v]
 
     def testBinary(self):
@@ -35,14 +38,13 @@ class BinaryTestCase(TestCase):
 
 
 if __name__ == '__main__':
-    import sys, lucene
-    lucene.initVM()
+    lucene.initVM(vmargs=['-Djava.awt.headless=true'])
     if '-loop' in sys.argv:
         sys.argv.remove('-loop')
         while True:
             try:
-                main()
+                unittest.main()
             except:
                 pass
     else:
-        main()
+        unittest.main()

@@ -12,55 +12,52 @@
 #   limitations under the License.
 # ====================================================================
 
-from unittest import TestCase, main
-from lucene import *
+import sys, lucene, unittest
+from lucene import JArray
+from PyLuceneTestCase import PyLuceneTestCase
+
+from org.apache.lucene.document import \
+    Document, StoredField, CompressionTools, Field, FieldType
+from org.apache.lucene.analysis.standard import StandardAnalyzer
+from org.apache.lucene.index import IndexWriter
+from org.apache.lucene.util import Version
 
 
-class TestBinaryDocument(TestCase):
+class TestBinaryDocument(PyLuceneTestCase):
 
     binaryValStored = "this text will be stored as a byte array in the index"
     binaryValCompressed = "this text will be also stored and compressed as a byte array in the index"
   
     def testBinaryFieldInIndex(self):
 
-        bytes = JArray('byte')(self.binaryValStored)
-        binaryFldStored = Field("binaryStored", bytes, 
-                                Field.Store.YES)
-        stringFldStored = Field("stringStored", self.binaryValStored,
-                                Field.Store.YES, Field.Index.NO,
-                                Field.TermVector.NO)
+        ft = FieldType()
+        ft.setStored(True)
 
-        try:
-            # binary fields with store off are not allowed
-            Field("fail", bytes, Field.Store.NO)
-            self.fail()
-        except JavaError, e:
-            self.assertEqual(e.getJavaException().getClass().getName(),
-                             'java.lang.IllegalArgumentException')
-    
+        bytes = JArray('byte')(self.binaryValStored)
+        binaryFldStored = StoredField("binaryStored", bytes)
+        stringFldStored = Field("stringStored", self.binaryValStored, ft)
+        
         doc = Document()
         doc.add(binaryFldStored)
         doc.add(stringFldStored)
-
+        
         # test for field count
         self.assertEqual(2, doc.fields.size())
     
         # add the doc to a ram index
-        dir = RAMDirectory()
-        writer = IndexWriter(dir, StandardAnalyzer(Version.LUCENE_CURRENT),
-                             True, IndexWriter.MaxFieldLength.LIMITED)
+        writer = self.getWriter(analyzer=StandardAnalyzer(Version.LUCENE_CURRENT))
         writer.addDocument(doc)
         writer.close()
     
         # open a reader and fetch the document
-        reader = IndexReader.open(dir, False)
+        reader = self.getReader()
         docFromReader = reader.document(0)
         self.assert_(docFromReader is not None)
     
         # fetch the binary stored field and compare it's content with the
         # original one
         bytes = docFromReader.getBinaryValue("binaryStored")
-        binaryFldStoredTest = bytes.string_
+        binaryFldStoredTest = bytes.bytes.string_
         self.assertEqual(binaryFldStoredTest, self.binaryValStored)
         
         # fetch the string field and compare it's content with the original
@@ -68,32 +65,25 @@ class TestBinaryDocument(TestCase):
         stringFldStoredTest = docFromReader.get("stringStored")
         self.assertEqual(stringFldStoredTest, self.binaryValStored)
     
-        # delete the document from index
-        reader.deleteDocument(0)
-        self.assertEqual(0, reader.numDocs())
-    
         reader.close()
-        dir.close()
   
     def testCompressionTools(self):
 
         bytes = JArray('byte')(self.binaryValCompressed)
-        binaryFldCompressed = Field("binaryCompressed", CompressionTools.compress(bytes), Field.Store.YES)
-        stringFldCompressed = Field("stringCompressed", CompressionTools.compressString(self.binaryValCompressed), Field.Store.YES)
+        binaryFldCompressed = StoredField("binaryCompressed", CompressionTools.compress(bytes))
+        stringFldCompressed = StoredField("stringCompressed", CompressionTools.compressString(self.binaryValCompressed))
     
         doc = Document()
         doc.add(binaryFldCompressed)
         doc.add(stringFldCompressed)
     
         # add the doc to a ram index
-        dir = RAMDirectory()
-        writer = IndexWriter(dir, StandardAnalyzer(Version.LUCENE_CURRENT),
-                             True, IndexWriter.MaxFieldLength.LIMITED)
+        writer = self.getWriter(analyzer=StandardAnalyzer(Version.LUCENE_CURRENT))
         writer.addDocument(doc)
         writer.close()
     
         # open a reader and fetch the document
-        reader = IndexReader.open(dir, False)
+        reader = self.getReader()
         docFromReader = reader.document(0)
         self.assert_(docFromReader is not None)
     
@@ -105,18 +95,16 @@ class TestBinaryDocument(TestCase):
         self.assertEqual(CompressionTools.decompressString(docFromReader.getBinaryValue("stringCompressed")), self.binaryValCompressed)
 
         reader.close()
-        dir.close()
 
 
 if __name__ == '__main__':
-    import sys, lucene
-    lucene.initVM()
+    lucene.initVM(vmargs=['-Djava.awt.headless=true'])
     if '-loop' in sys.argv:
         sys.argv.remove('-loop')
         while True:
             try:
-                main()
+                unittest.main()
             except:
                 pass
     else:
-        main()
+        unittest.main()

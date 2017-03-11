@@ -24,6 +24,7 @@ typedef int Py_ssize_t;
 #endif
 
 extern jobjectArray fromPySequence(jclass cls, PyObject *sequence);
+extern jobjectArray fromPySequence(jclass cls, PyObject **args, int length);
 extern PyObject *PyErr_SetJavaError();
 
 extern PyTypeObject *PY_TYPE(JArrayObject);
@@ -37,7 +38,11 @@ extern PyTypeObject *PY_TYPE(JArrayInt);
 extern PyTypeObject *PY_TYPE(JArrayLong);
 extern PyTypeObject *PY_TYPE(JArrayShort);
 
-#endif
+#else
+
+typedef int Py_ssize_t;
+
+#endif /* PYTHON */
 
 #include "JCCEnv.h"
 #include "java/lang/Object.h"
@@ -60,6 +65,10 @@ public:
     }
 
     JArray<T>(jclass cls, PyObject *sequence) : java::lang::Object(fromPySequence(cls, sequence)) {
+        length = this$ ? env->getArrayLength((jobjectArray) this$) : 0;
+    }
+
+    JArray<T>(jclass cls, PyObject **args, int length) : java::lang::Object(fromPySequence(cls, args, length)) {
         length = this$ ? env->getArrayLength((jobjectArray) this$) : 0;
     }
 
@@ -115,6 +124,10 @@ template<> class JArray<jobject> : public java::lang::Object {
 
 #ifdef PYTHON
     JArray<jobject>(jclass cls, PyObject *sequence) : java::lang::Object(fromPySequence(cls, sequence)) {
+        length = this$ ? env->getArrayLength((jobjectArray) this$) : 0;
+    }
+
+    JArray<jobject>(jclass cls, PyObject **args, int length) : java::lang::Object(fromPySequence(cls, args, length)) {
         length = this$ ? env->getArrayLength((jobjectArray) this$) : 0;
     }
 
@@ -408,6 +421,26 @@ template<> class JArray<jboolean> : public java::lang::Object {
         }
     }
 
+    JArray<jboolean>(PyObject **args, int length) : java::lang::Object(env->get_vm_env()->NewBooleanArray(length)) {
+        arrayElements elts = elements();
+        jboolean *buf = (jboolean *) elts;
+
+        for (int i = 0; i < length; i++) {
+            PyObject *obj = args[i];
+
+            if (!obj)
+                break;
+
+            if (obj == Py_True || obj == Py_False)
+                buf[i] = (jboolean) (obj == Py_True);
+            else
+            {
+                PyErr_SetObject(PyExc_TypeError, obj);
+                break;
+            }
+        }
+    }
+
     PyObject *toSequence()
     {
         return toSequence(0, length);
@@ -560,6 +593,28 @@ template<> class JArray<jbyte> : public java::lang::Object {
                     break;
                 }
             }
+    }
+
+    JArray<jbyte>(PyObject **args, int length) : java::lang::Object(env->get_vm_env()->NewByteArray(length)) {
+        arrayElements elts = elements();
+        jbyte *buf = (jbyte *) elts;
+
+        for (int i = 0; i < length; i++) {
+            PyObject *obj = args[i];
+
+            if (!obj)
+                break;
+
+            if (PyString_Check(obj) && (PyString_GET_SIZE(obj) == 1))
+                buf[i] = (jbyte) PyString_AS_STRING(obj)[0];
+            else if (PyInt_CheckExact(obj))
+                buf[i] = (jbyte) PyInt_AS_LONG(obj);
+            else
+            {
+                PyErr_SetObject(PyExc_TypeError, obj);
+                break;
+            }
+        }
     }
 
     char getType()
@@ -741,6 +796,26 @@ template<> class JArray<jchar> : public java::lang::Object {
             }
     }
 
+    JArray<jchar>(PyObject **args, int length) : java::lang::Object(env->get_vm_env()->NewCharArray(length)) {
+        arrayElements elts = elements();
+        jchar *buf = (jchar *) elts;
+
+        for (int i = 0; i < length; i++) {
+            PyObject *obj = args[i];
+
+            if (!obj)
+                break;
+
+            if (PyUnicode_Check(obj) && (PyUnicode_GET_SIZE(obj) == 1))
+                buf[i] = (jchar) PyUnicode_AS_UNICODE(obj)[0];
+            else
+            {
+                PyErr_SetObject(PyExc_TypeError, obj);
+                break;
+            }
+        }
+    }
+
     PyObject *toSequence()
     {
         return toSequence(0, length);
@@ -915,6 +990,26 @@ template<> class JArray<jdouble> : public java::lang::Object {
         }
     }
 
+    JArray<jdouble>(PyObject **args, int length) : java::lang::Object(env->get_vm_env()->NewDoubleArray(length)) {
+        arrayElements elts = elements();
+        jdouble *buf = (jdouble *) elts;
+
+        for (int i = 0; i < length; i++) {
+            PyObject *obj = args[i];
+
+            if (!obj)
+                break;
+
+            if (PyFloat_Check(obj))
+                buf[i] = (jdouble) PyFloat_AS_DOUBLE(obj);
+            else
+            {
+                PyErr_SetObject(PyExc_TypeError, obj);
+                break;
+            }
+        }
+    }
+
     PyObject *toSequence()
     {
         return toSequence(0, length);
@@ -1057,6 +1152,26 @@ template<> class JArray<jfloat> : public java::lang::Object {
             {
                 PyErr_SetObject(PyExc_TypeError, obj);
                 Py_DECREF(obj);
+                break;
+            }
+        }
+    }
+
+    JArray<jfloat>(PyObject **args, int length) : java::lang::Object(env->get_vm_env()->NewFloatArray(length)) {
+        arrayElements elts = elements();
+        jfloat *buf = (jfloat *) elts;
+
+        for (int i = 0; i < length; i++) {
+            PyObject *obj = args[i];
+
+            if (!obj)
+                break;
+
+            if (PyFloat_Check(obj))
+                buf[i] = (jfloat) PyFloat_AS_DOUBLE(obj);
+            else
+            {
+                PyErr_SetObject(PyExc_TypeError, obj);
                 break;
             }
         }
@@ -1209,6 +1324,26 @@ template<> class JArray<jint> : public java::lang::Object {
         }
     }
 
+    JArray<jint>(PyObject **args, int length) : java::lang::Object(env->get_vm_env()->NewIntArray(length)) {
+        arrayElements elts = elements();
+        jint *buf = (jint *) elts;
+
+        for (int i = 0; i < length; i++) {
+            PyObject *obj = args[i];
+
+            if (!obj)
+                break;
+
+            if (PyInt_Check(obj))
+                buf[i] = (jint) PyInt_AS_LONG(obj);
+            else
+            {
+                PyErr_SetObject(PyExc_TypeError, obj);
+                break;
+            }
+        }
+    }
+
     PyObject *toSequence()
     {
         return toSequence(0, length);
@@ -1356,6 +1491,26 @@ template<> class JArray<jlong> : public java::lang::Object {
         }
     }
 
+    JArray<jlong>(PyObject **args, int length) : java::lang::Object(env->get_vm_env()->NewLongArray(length)) {
+        arrayElements elts = elements();
+        jlong *buf = (jlong *) elts;
+
+        for (int i = 0; i < length; i++) {
+            PyObject *obj = args[i];
+
+            if (!obj)
+                break;
+
+            if (PyLong_Check(obj))
+                buf[i] = (jlong) PyLong_AsLongLong(obj);
+            else
+            {
+                PyErr_SetObject(PyExc_TypeError, obj);
+                break;
+            }
+        }
+    }
+
     PyObject *toSequence()
     {
         return toSequence(0, length);
@@ -1498,6 +1653,26 @@ template<> class JArray<jshort> : public java::lang::Object {
             {
                 PyErr_SetObject(PyExc_TypeError, obj);
                 Py_DECREF(obj);
+                break;
+            }
+        }
+    }
+
+    JArray<jshort>(PyObject **args, int length) : java::lang::Object(env->get_vm_env()->NewShortArray(length)) {
+        arrayElements elts = elements();
+        jshort *buf = (jshort *) elts;
+
+        for (int i = 0; i < length; i++) {
+            PyObject *obj = args[i];
+
+            if (!obj)
+                break;
+
+            if (PyInt_Check(obj))
+                buf[i] = (jshort) PyInt_AS_LONG(obj);
+            else
+            {
+                PyErr_SetObject(PyExc_TypeError, obj);
                 break;
             }
         }

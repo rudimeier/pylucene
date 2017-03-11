@@ -12,11 +12,17 @@
 #   limitations under the License.
 # ====================================================================
 
-from unittest import TestCase, main
-from lucene import *
+import sys, lucene, unittest
+from PyLuceneTestCase import PyLuceneTestCase
+
+from org.apache.lucene.analysis.standard import StandardAnalyzer
+from org.apache.lucene.document import Document, Field, TextField
+from org.apache.lucene.index import Term
+from org.apache.lucene.search import BooleanClause, BooleanQuery, TermQuery
+from org.apache.lucene.util import Version
 
 
-class BooleanOrTestCase(TestCase):
+class BooleanOrTestCase(PyLuceneTestCase):
     """
     Unit tests ported from Java Lucene
     """
@@ -36,23 +42,21 @@ class BooleanOrTestCase(TestCase):
         self.searcher = None
 
     def setUp(self):
+        super(BooleanOrTestCase, self).setUp()
 
-        rd = RAMDirectory()
-        writer = IndexWriter(rd, StandardAnalyzer(Version.LUCENE_CURRENT),
-                             True, IndexWriter.MaxFieldLength.LIMITED)
-
+        # add the doc to a ram index
+        writer = self.getWriter(analyzer=StandardAnalyzer(Version.LUCENE_CURRENT))
         d = Document()
-        d.add(Field(self.FIELD_T,
-                    "Optimize not deleting all files",
-                    Field.Store.YES, Field.Index.ANALYZED))
+        d.add(Field(self.FIELD_T, "Optimize not deleting all files",
+                    TextField.TYPE_STORED))
         d.add(Field(self.FIELD_C,
                     "Deleted When I run an optimize in our production environment.",
-                    Field.Store.YES, Field.Index.ANALYZED))
+                    TextField.TYPE_STORED))
 
         writer.addDocument(d)
         writer.close()
 
-        self.searcher = IndexSearcher(rd, True)
+        self.searcher = self.getSearcher()
 
     def search(self, q):
         return self.searcher.search(q, 50).totalHits
@@ -114,14 +118,13 @@ class BooleanOrTestCase(TestCase):
 
 
 if __name__ == "__main__":
-    import sys, lucene
-    lucene.initVM()
+    lucene.initVM(vmargs=['-Djava.awt.headless=true'])
     if '-loop' in sys.argv:
         sys.argv.remove('-loop')
         while True:
             try:
-                main()
+                unittest.main()
             except:
                 pass
     else:
-         main()
+         unittest.main()

@@ -13,6 +13,8 @@
  */
 
 #include <map>
+
+#include <stdlib.h>
 #include <string.h>
 #include <jni.h>
 
@@ -259,7 +261,11 @@ jclass JCCEnv::findClass(const char *className) const
         JNIEnv *vm_env = get_vm_env();
 
         if (vm_env)
+        {
             cls = vm_env->FindClass(className);
+            if (cls == NULL)
+                reportException();
+        }
 #ifdef PYTHON
         else
         {
@@ -470,6 +476,48 @@ jclass JCCEnv::getPythonExceptionClass() const
 {
     return _thr;
 }
+
+// returns true if Python exception instance was successfully restored
+bool JCCEnv::restorePythonException(jthrowable throwable) const
+{
+#ifdef _jcc_lib   // PythonException is only available in shared mode
+    jclass pycls = getPythonExceptionClass();
+    JNIEnv *vm_env = get_vm_env();
+
+    // Support through-layer exceptions by taking the active PythonException
+    // and making the enclosed exception visible to Python again.
+
+    if (vm_env->IsSameObject(vm_env->GetObjectClass(throwable), pycls))
+    {
+        jfieldID fid = vm_env->GetFieldID(pycls, "py_error_state", "J");
+        PyObject *state = (PyObject *) vm_env->GetLongField(throwable, fid);
+        
+        if (state != NULL)
+        {
+            PyObject *type = PyTuple_GET_ITEM(state, 0);
+            PyObject *value = PyTuple_GET_ITEM(state, 1);
+            PyObject *tb = PyTuple_GET_ITEM(state, 2);
+
+            Py_INCREF(type);
+            if (value == Py_None)
+                value = NULL;
+            else
+                Py_INCREF(value);
+            if (tb == Py_None)
+                tb = NULL;
+            else
+                Py_INCREF(tb);
+
+            PyErr_Restore(type, value, tb);
+
+            return true;
+        }
+    }
+#endif
+
+    return false;
+}
+
 #endif
 
 void JCCEnv::reportException() const
@@ -817,10 +865,10 @@ void JCCEnv::setClassPath(const char *classPath)
     jmethodID mu = vm_env->GetMethodID(_fil, "toURL", "()Ljava/net/URL;");
     jmethodID ma = vm_env->GetMethodID(_ucl, "addURL", "(Ljava/net/URL;)V");
 #if defined(_MSC_VER) || defined(__WIN32)
-    char *pathsep = ";";
+    const char *pathsep = ";";
     char *path = _strdup(classPath);
 #else
-    char *pathsep = ":";
+    const char *pathsep = ":";
     char *path = strdup(classPath);
 #endif
 
@@ -847,9 +895,9 @@ char *JCCEnv::getClassPath()
     jmethodID gu = vm_env->GetMethodID(_ucl, "getURLs", "()[Ljava/net/URL;");
     jmethodID gp = vm_env->GetMethodID(_url, "getPath", "()Ljava/lang/String;");
 #if defined(_MSC_VER) || defined(__WIN32)
-    char *pathsep = ";";
+    const char *pathsep = ";";
 #else
-    char *pathsep = ":";
+    const char *pathsep = ":";
 #endif
     jobjectArray array = (jobjectArray)
         vm_env->CallObjectMethod(classLoader, gu);

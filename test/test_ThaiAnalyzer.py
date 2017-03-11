@@ -13,9 +13,13 @@
 #   limitations under the License.
 # ====================================================================
 
-from unittest import TestCase, main
-from lucene import ThaiAnalyzer, ThaiWordFilter, StringReader, Version
+import sys, lucene, unittest
 from BaseTokenStreamTestCase import BaseTokenStreamTestCase
+
+from java.io import StringReader
+from org.apache.lucene.analysis.th import ThaiAnalyzer, ThaiWordFilter
+from org.apache.lucene.analysis.util import CharArraySet
+from org.apache.lucene.util import Version
 
 
 class ThaiAnalyzerTestCase(BaseTokenStreamTestCase):
@@ -23,7 +27,7 @@ class ThaiAnalyzerTestCase(BaseTokenStreamTestCase):
     def testOffsets(self):
         self.assert_(ThaiWordFilter.DBBI_AVAILABLE,
                      "JRE does not support Thai dictionary-based BreakIterator")
-        self._assertAnalyzesTo(ThaiAnalyzer(Version.LUCENE_35),
+        self._assertAnalyzesTo(ThaiAnalyzer(Version.LUCENE_CURRENT, CharArraySet.EMPTY_SET),
                                u"การที่ได้ต้องแสดงว่างานดี", 
                                [ u"การ", u"ที่", u"ได้", u"ต้อง", u"แสดง",
                                  u"ว่า", u"งาน", u"ดี" ],
@@ -71,6 +75,27 @@ class ThaiAnalyzerTestCase(BaseTokenStreamTestCase):
     def testAnalyzer30(self):
 
         analyzer = ThaiAnalyzer(Version.LUCENE_30)
+
+        self._assertAnalyzesTo(analyzer, u"การที่ได้ต้อง the แสดงว่างานดี", 
+                               [ u"การ", u"ที่", u"ได้", u"ต้อง", u"แสดง",
+                                 u"ว่า", u"งาน", u"ดี" ],
+                               [ 0, 3, 6, 9, 18, 22, 25, 28 ],
+                               [ 3, 6, 9, 13, 22, 25, 28, 30 ],
+                               None,
+                               [ 1, 1, 1, 1, 2, 1, 1, 1 ])
+	 
+        # case that a stopword is adjacent to thai text, with no whitespace
+        self._assertAnalyzesTo(analyzer, u"การที่ได้ต้องthe แสดงว่างานดี", 
+                               [ u"การ", u"ที่", u"ได้", u"ต้อง", u"แสดง",
+                                 u"ว่า", u"งาน", u"ดี" ],
+                               [ 0, 3, 6, 9, 17, 21, 24, 27 ],
+                               [ 3, 6, 9, 13, 21, 24, 27, 29 ],
+                               None,
+                               [ 1, 1, 1, 1, 2, 1, 1, 1 ])
+
+    def testAnalyzer30(self):
+
+        analyzer = ThaiAnalyzer(Version.LUCENE_30)
     
         self._assertAnalyzesTo(analyzer, u"", [])
 
@@ -91,17 +116,16 @@ class ThaiAnalyzerTestCase(BaseTokenStreamTestCase):
 
 
 if __name__ == "__main__":
-    import sys, lucene
-    lucene.initVM()
+    lucene.initVM(vmargs=['-Djava.awt.headless=true'])
     if ThaiWordFilter.DBBI_AVAILABLE:
         if '-loop' in sys.argv:
             sys.argv.remove('-loop')
             while True:
                 try:
-                    main()
+                    unittest.main()
                 except:
                     pass
         else:
-            main()
+            unittest.main()
     else:
         print >>sys.stderr, "Thai not supported by this JVM, tests skipped"

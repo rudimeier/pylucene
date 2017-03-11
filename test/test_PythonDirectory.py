@@ -12,14 +12,18 @@
 #   limitations under the License.
 # ====================================================================
 
-import os, sys, unittest, shutil
-from threading import RLock
+import sys, lucene, unittest
+import os, shutil
 import test_PyLucene 
+from binascii import crc32
+from threading import RLock
+from lucene import JavaError, JArray
 
-from lucene import \
+from java.lang import String
+from java.io import IOException
+from org.apache.pylucene.store import \
     PythonLock, PythonLockFactory, \
-    PythonIndexInput, PythonIndexOutput, PythonDirectory, \
-    JavaError, IOException, JArray, String
+    PythonIndexInput, PythonIndexOutput, PythonDirectory
 
 """
 The Directory Implementation here is for testing purposes only, not meant
@@ -69,6 +73,10 @@ class PythonDirLock(PythonLock):
     def release(self):
         return self.lock.release()
 
+    def close(self):
+        if hasattr(self.lock, 'close'):
+            self.lock.close()
+
 
 class PythonDirLockFactory(PythonLockFactory):
 
@@ -98,7 +106,7 @@ class PythonFileStreamInput(PythonIndexInput):
 
     def __init__(self, name, fh, size, clone=False):
         if not clone:
-            super(PythonFileStreamInput, self).__init__()
+            super(PythonFileStreamInput, self).__init__(name, size)
         self.name = name
         self.fh = fh
         self._length = size
@@ -134,31 +142,51 @@ class PythonFileStreamOutput(PythonIndexOutput):
         self.fh = fh
         self.isOpen = True
         self._length = 0
+        self.crc = None
 
     def close(self):
         if self.isOpen:
-            super(PythonFileStreamOutput, self).close()
             self.isOpen = False
+            self.fh.flush()
             self.fh.close()
 
-    def length(self):
+    def getFilePointer(self):
         return long(self._length)
 
-    def seekInternal(self, pos):
-        self.fh.seek(pos)
+    def getChecksum(self):
+        return long(self.crc & 0xffffffff)
 
-    def flushBuffer(self, bytes):
+    def writeByte(self, b):
+        if b < 0:
+            data = chr(b + 256)
+        else:
+            data = chr(b)
+        self.fh.write(data)
+        self._length += 1
 
-        self.fh.write(bytes.string_)
+        if self.crc is None:
+            self.crc = crc32(data)
+        else:
+            self.crc = crc32(data, self.crc)
+
+    def writeBytes(self, bytes):
+        data = bytes.string_
+        self.fh.write(data)
         self.fh.flush()
-        self._length += len(bytes)
+        self._length += len(data)
+
+        if self.crc is None:
+            self.crc = crc32(data)
+        else:
+            self.crc = crc32(data, self.crc)
 
 
 class PythonFileDirectory(PythonDirectory):
 
     def __init__(self, path):
-        super(PythonFileDirectory, self).__init__(PythonDirLockFactory(path))
+        super(PythonFileDirectory, self).__init__()
 
+        self._lockFactory = PythonDirLockFactory(path)
         self.name = path
         assert os.path.isdir(path)
         self.path = path
@@ -169,7 +197,7 @@ class PythonFileDirectory(PythonDirectory):
             stream.close()
         del self._streams[:]
 
-    def createOutput(self, name):
+    def createOutput(self, name, context):
         file_path = os.path.join(self.path, name)
         fh = open(file_path, "wb")
         stream = PythonFileStreamOutput(name, fh)
@@ -211,6 +239,18 @@ class PythonFileDirectory(PythonDirectory):
         file_path = os.path.join(self.path, name)
         os.utime(file_path, None)
 
+    def setLockFactory(self, lockFactory):
+        pass
+
+    def getLockFactory(self):
+        return None
+
+    def clearLock(self, name):
+        self._lockFactory.clearLock(name)
+
+    def makeLock(self, name):
+        return self._lockFactory.makeLock(name)
+
 
 if DEBUG:
     _globals = globals()
@@ -250,8 +290,7 @@ class PythonDirectoryTests(unittest.TestCase, test_PyLucene.Test_PyLuceneBase):
                        
 
 if __name__ == "__main__":
-    import sys, lucene
-    env = lucene.initVM()
+    env = lucene.initVM(vmargs=['-Djava.awt.headless=true'])
     if '-loop' in sys.argv:
         sys.argv.remove('-loop')
         while True:

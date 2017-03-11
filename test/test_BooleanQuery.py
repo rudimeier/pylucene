@@ -12,11 +12,14 @@
 #   limitations under the License.
 # ====================================================================
 
-from unittest import TestCase, main
-from lucene import *
+import sys, lucene, unittest
+from PyLuceneTestCase import PyLuceneTestCase
+
+from org.apache.lucene.index import Term
+from org.apache.lucene.search import BooleanClause, BooleanQuery, TermQuery
 
 
-class TestBooleanQuery(TestCase):
+class TestBooleanQuery(PyLuceneTestCase):
     """
     Unit tests ported from Java Lucene
     """
@@ -45,14 +48,13 @@ class TestBooleanQuery(TestCase):
 
 
 if __name__ == "__main__":
-    import sys, lucene
-    lucene.initVM()
+    lucene.initVM(vmargs=['-Djava.awt.headless=true'])
     if '-loop' in sys.argv:
         sys.argv.remove('-loop')
         while True:
             try:
-                main()
+                unittest.main()
             except:
                 pass
     else:
-         main()
+         unittest.main()

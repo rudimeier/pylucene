@@ -12,7 +12,7 @@
 
 import os, sys, platform, subprocess
 
-jcc_ver = '2.15'
+jcc_ver = '2.21'
 machine = platform.machine()
 
 if machine.startswith("iPod") or machine.startswith("iPhone"):
@@ -37,19 +37,22 @@ else:
 
 if platform in ("win32", "mingw32"):
     try:
+        JAVAFRAMEWORKS = None
         from helpers.windows import JAVAHOME
     except ImportError:
         JAVAHOME = None
 elif platform in ("darwin",):
     try:
-        from helpers.darwin import JAVAHOME
+        from helpers.darwin import JAVAHOME, JAVAFRAMEWORKS
     except ImportError:
         JAVAHOME = None
+        JAVAFRAMEWORKS = None
 else:
     JAVAHOME = None
+    JAVAFRAMEWORKS = None
 
 JDK = {
-    'darwin': JAVAHOME,
+    'darwin': JAVAHOME or JAVAFRAMEWORKS,
     'ipod': '/usr/include/gcc',
     'linux2': '/usr/lib/jvm/java-7-openjdk-amd64',
     'sunos5': '/usr/jdk/instances/jdk1.6.0',
@@ -81,7 +84,9 @@ running setup.py.
 
 
 INCLUDES = {
-    'darwin': ['%(darwin)s/Headers' %(JDK)],
+    'darwin/frameworks': ['%(darwin)s/Headers' %(JDK)],
+    'darwin/home': ['%(darwin)s/include' %(JDK),
+                    '%(darwin)s/include/darwin' %(JDK)],
     'ipod': ['%(ipod)s/darwin/default' %(JDK)],
     'linux2': ['%(linux2)s/include' %(JDK),
                '%(linux2)s/include/linux' %(JDK)],
@@ -118,7 +123,11 @@ DEBUG_CFLAGS = {
 }
 
 LFLAGS = {
-    'darwin': ['-framework', 'JavaVM'],
+    'darwin/frameworks': ['-framework', 'JavaVM'],
+    'darwin/home': ['-L%(darwin)s/jre/lib' %(JDK), '-ljava',
+                    '-L%(darwin)s/jre/lib/server' %(JDK), '-ljvm',
+                    '-Wl,-rpath', '-Wl,%(darwin)s/jre/lib' %(JDK),
+                    '-Wl,-rpath', '-Wl,%(darwin)s/jre/lib/server' %(JDK)],
     'ipod': ['-ljvm', '-lpython%s.%s' %(sys.version_info[0:2]),
              '-L/usr/lib/gcc/arm-apple-darwin9/4.0.1'],
     'linux2/i386': ['-L%(linux2)s/jre/lib/i386' %(JDK), '-ljava',
@@ -147,9 +156,16 @@ IMPLIB_LFLAGS = {
 
 if platform == 'linux2':
     LFLAGS['linux2'] = LFLAGS['linux2/%s' %(machine)]
+elif platform == 'darwin':
+    if JAVAHOME is not None:
+        INCLUDES['darwin'] = INCLUDES['darwin/home']
+        LFLAGS['darwin'] = LFLAGS['darwin/home']
+    elif JAVAFRAMEWORKS is not None:
+        INCLUDES['darwin'] = INCLUDES['darwin/frameworks']
+        LFLAGS['darwin'] = LFLAGS['darwin/frameworks']
 
 JAVAC = {
-    'darwin': ['javac', '-target', '1.5'],
+    'darwin': ['javac', '-source', '1.5', '-target', '1.5'],
     'ipod': ['jikes', '-cp', '/usr/share/classpath/glibj.zip'],
     'linux2': ['javac'],
     'sunos5': ['javac'],
@@ -177,13 +193,28 @@ try:
 
     enable_shared = False
     with_setuptools_c7 = ('00000000', '00000006', '*c', '00000007', '*final')
+    with_setuptools_116 = ('00000001', '00000001', '00000006', '*final')
 
     if with_setuptools >= with_setuptools_c7 and 'NO_SHARED' not in os.environ:
-        if platform in ('darwin', 'ipod', 'win32'):
+        if platform in ('ipod', 'win32'):
             enable_shared = True
+
+        elif platform == 'darwin':
+            enable_shared = True
+            if with_setuptools >= with_setuptools_116:
+                # fix Library building by monkey-patching expected _config_vars
+                # into build_ext otherwise build_ext is using sysconfig's
+                # instead, wrongly
+                from setuptools.command import build_ext
+                from distutils.sysconfig import get_config_var
+                get_config_var("LDSHARED")  # ensure _config_vars is initialized
+                from distutils.sysconfig import _config_vars
+                build_ext._CONFIG_VARS = _config_vars
+
         elif platform == 'linux2':
             from helpers.linux import patch_setuptools
             enable_shared = patch_setuptools(with_setuptools)
+
         elif platform == 'mingw32':
             enable_shared = True
             # need to monkeypatch the CygwinCCompiler class to generate
@@ -191,6 +222,12 @@ try:
             from helpers.mingw32 import JCCMinGW32CCompiler
             import distutils.cygwinccompiler
             distutils.cygwinccompiler.Mingw32CCompiler = JCCMinGW32CCompiler
+
+        if enable_shared:
+            if with_setuptools >= with_setuptools_116:
+                from setuptools.extension import Library
+            else:
+                from setuptools import Library
 
 except ImportError:
     if sys.version_info < (2, 4):
@@ -287,7 +324,6 @@ def main(debug):
 
     if with_setuptools and enable_shared:
         from subprocess import Popen, PIPE
-        from setuptools import Library
 
         kwds = { "extra_compile_args": cflags,
                  "include_dirs": includes,

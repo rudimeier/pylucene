@@ -12,35 +12,37 @@
 #   limitations under the License.
 # ====================================================================
 
-import unittest
-from lucene import *
+import sys, lucene, unittest
+from PyLuceneTestCase import PyLuceneTestCase
 
-class Test_Bug1564(unittest.TestCase):
+from org.apache.lucene.analysis.standard import StandardAnalyzer
+from org.apache.lucene.document import Document, Field, StoredField, TextField
+from org.apache.lucene.queryparser.classic import QueryParser
+from org.apache.lucene.util import Version
+
+
+class Test_Bug1564(PyLuceneTestCase):
 
     def setUp(self):
-
+        super(Test_Bug1564, self).setUp()
+        
         self.analyzer = StandardAnalyzer(Version.LUCENE_CURRENT)
-        self.store = RAMDirectory()
+        writer = self.getWriter(analyzer=self.analyzer)
 
-        writer = IndexWriter(self.store, self.analyzer, True,
-                             IndexWriter.MaxFieldLength.LIMITED)
         doc = Document()
         doc.add(Field('all', u'windowpane beplaster rapacious \
         catatonia gauntlet wynn depressible swede pick dressmake supreme \
         jeremy plumb theoretic bureaucracy causation chartres equipoise \
-        dispersible careen heard',
-                      Field.Store.NO, Field.Index.ANALYZED))
-        doc.add(Field('id', '1', Field.Store.YES, Field.Index.NO))
-        writer.addDocument(doc)
-        writer.optimize()
-        writer.close()
+        dispersible careen heard', TextField.TYPE_NOT_STORED))
+        doc.add(Field('id', '1', StoredField.TYPE))
 
-    def tearDown(self):
-        pass
+        writer.addDocument(doc)
+        writer.commit()
+        writer.close()
 
     def test_bug1564(self):
 
-        searcher = IndexSearcher(self.store, True)
+        searcher = self.getSearcher()
         query = QueryParser(Version.LUCENE_CURRENT, 'all',
                             self.analyzer).parse('supreme')
         topDocs = searcher.search(query, 50)
@@ -48,6 +50,5 @@ class Test_Bug1564(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    import lucene
-    lucene.initVM()
+    lucene.initVM(vmargs=['-Djava.awt.headless=true'])
     unittest.main()

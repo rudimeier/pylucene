@@ -12,72 +12,71 @@
 #   limitations under the License.
 # ====================================================================
 
-from unittest import TestCase, main
-from lucene import *
+import sys, lucene, unittest
+from PyLuceneTestCase import PyLuceneTestCase
+
+from java.util import BitSet
+from org.apache.lucene.analysis.core import WhitespaceAnalyzer
+from org.apache.lucene.document import Document, Field, TextField
+from org.apache.lucene.index import Term
+from org.apache.lucene.search import \
+    FilteredQuery, Sort, SortField, TermRangeQuery, TermQuery
+from org.apache.lucene.util import Bits, DocIdBitSet, Version
+from org.apache.pylucene.search import PythonFilter
 
 
-class FilteredQueryTestCase(TestCase):
+class FilteredQueryTestCase(PyLuceneTestCase):
     """
     Unit tests ported from Java Lucene
     """
 
     def setUp(self):
+        super(FilteredQueryTestCase, self).setUp()
 
-        self.directory = RAMDirectory()
-        writer = IndexWriter(self.directory, WhitespaceAnalyzer(), True,
-                             IndexWriter.MaxFieldLength.LIMITED)
+        writer = self.getWriter(analyzer=WhitespaceAnalyzer(Version.LUCENE_CURRENT))
 
         doc = Document()
-        doc.add(Field("field", "one two three four five",
-                      Field.Store.YES, Field.Index.ANALYZED))
-        doc.add(Field("sorter", "b",
-                      Field.Store.YES, Field.Index.ANALYZED))
+        doc.add(Field("field", "one two three four five", TextField.TYPE_STORED))
+        doc.add(Field("sorter", "b", TextField.TYPE_STORED))
                       
         writer.addDocument(doc)
 
         doc = Document()
-        doc.add(Field("field", "one two three four",
-                      Field.Store.YES, Field.Index.ANALYZED))
-        doc.add(Field("sorter", "d",
-                      Field.Store.YES, Field.Index.ANALYZED))
+        doc.add(Field("field", "one two three four", TextField.TYPE_STORED))
+        doc.add(Field("sorter", "d", TextField.TYPE_STORED))
 
         writer.addDocument(doc)
 
         doc = Document()
-        doc.add(Field("field", "one two three y",
-                      Field.Store.YES, Field.Index.ANALYZED))
-        doc.add(Field("sorter", "a",
-                      Field.Store.YES, Field.Index.ANALYZED))
+        doc.add(Field("field", "one two three y", TextField.TYPE_STORED))
+        doc.add(Field("sorter", "a", TextField.TYPE_STORED))
 
         writer.addDocument(doc)
 
         doc = Document()
-        doc.add(Field("field", "one two x",
-                      Field.Store.YES, Field.Index.ANALYZED))
-        doc.add(Field("sorter", "c",
-                      Field.Store.YES, Field.Index.ANALYZED))
+        doc.add(Field("field", "one two x", TextField.TYPE_STORED))
+        doc.add(Field("sorter", "c", TextField.TYPE_STORED))
                       
         writer.addDocument(doc)
 
-        writer.optimize()
+        writer.commit()
         writer.close()
 
-        self.searcher = IndexSearcher(self.directory, True)
+        self.searcher = self.getSearcher()
         self.query = TermQuery(Term("field", "three"))
 
         class filter(PythonFilter):
-            def getDocIdSet(self, reader):
+            def getDocIdSet(self, context, acceptDocs):
+                if acceptDocs is None:
+                    acceptDocs = Bits.MatchAllBits(5)
                 bitset = BitSet(5)
-                bitset.set(1)
-                bitset.set(3)
+                if acceptDocs.get(1):
+                    bitset.set(1)
+                if acceptDocs.get(3):
+                    bitset.set(3)
                 return DocIdBitSet(bitset)
 
         self.filter = filter()
-
-    def tearDown(self):
-
-        self.searcher.close()
-        self.directory.close()
 
     def testFilteredQuery(self):
 
@@ -88,7 +87,7 @@ class FilteredQueryTestCase(TestCase):
 
         topDocs = self.searcher.search(filteredquery, None, 50,
                                        Sort(SortField("sorter",
-                                                      SortField.STRING)))
+                                                      SortField.Type.STRING)))
         self.assertEqual(1, topDocs.totalHits)
         self.assertEqual(1, topDocs.scoreDocs[0].doc)
 
@@ -113,21 +112,20 @@ class FilteredQueryTestCase(TestCase):
         This tests FilteredQuery's rewrite correctness
         """
 
-        rq = TermRangeQuery("sorter", "b", "d", True, True)
+        rq = TermRangeQuery.newStringRange("sorter", "b", "d", True, True)
         filteredquery = FilteredQuery(rq, self.filter)
-        scoreDocs = self.searcher.search(filteredquery, 1000).scoreDocs
+        scoreDocs = self.searcher.search(filteredquery, None, 1000).scoreDocs
         self.assertEqual(2, len(scoreDocs))
 
 
 if __name__ == "__main__":
-    import sys, lucene
-    lucene.initVM()
+    lucene.initVM(vmargs=['-Djava.awt.headless=true'])
     if '-loop' in sys.argv:
         sys.argv.remove('-loop')
         while True:
             try:
-                main()
+                unittest.main()
             except:
                 pass
     else:
-         main()
+         unittest.main()

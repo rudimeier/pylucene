@@ -17,7 +17,7 @@ package org.apache.pylucene.search;
 
 import java.io.IOException;
 import org.apache.lucene.search.FieldComparator;
-import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.AtomicReaderContext;
 
 /**
  * @author Andi Vajda
@@ -49,12 +49,22 @@ public class PythonFieldComparator<T> extends FieldComparator<T> {
     public native void pythonDecRef();
 
     public native int compare(int slot1, int slot2);
-    public native void setBottom(final int slot);
     public native int compareBottom(int doc)
         throws IOException;
+    public native int compareTop(int doc)
+        throws IOException;
+
+    public native void setBottom(final int slot);
+    public native void setTopValue(T value);
+
     public native void copy(int slot, int doc) 
         throws IOException;
-    public native void setNextReader(IndexReader reader, int docBase)
+
+    public native FieldComparator setNextReader(AtomicReaderContext context)
         throws IOException;
+
     public native T value(int slot);
+
+    public native int compareDocToValue(int doc, T value)
+        throws IOException;
 }

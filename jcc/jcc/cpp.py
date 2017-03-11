@@ -96,8 +96,8 @@ PRIMITIVES = { 'boolean': 'Z',
 
 RESERVED = set(['delete', 'and', 'or', 'not', 'xor', 'union', 'register',
                 'const', 'bool', 'operator', 'typeof', 'asm', 'mutable',
-                'inline', 'typedef', 'struct',
-                'NULL', 'DOMAIN', 'IGNORE'])
+                'inline', 'typedef', 'struct', 'extern',
+                'NULL', 'DOMAIN', 'IGNORE', 'min', 'max', 'PREFIX'])
 
 RENAME_METHOD_SUFFIX = '_'
 RENAME_FIELD_SUFFIX = '__'
@@ -257,6 +257,43 @@ def addRequiredTypes(cls, typeset, generics):
             cls = cls.getSuperclass()
             if cls is not None:
                 addRequiredTypes(cls, typeset, False)
+
+
+def getActualTypeArguments(pt):
+
+    while True:
+        arguments = pt.getActualTypeArguments()
+        if arguments:
+            return arguments
+        pt = pt.getOwnerType()
+        if pt is None or not ParameterizedType.instance_(pt):
+            return []
+        pt = ParameterizedType.cast_(pt)
+
+
+def getTypeParameters(cls):
+    if cls is None:
+        return []
+
+    parameters = cls.getTypeParameters()
+    if parameters:
+        return parameters
+
+    superCls = cls.getGenericSuperclass()
+    if Class.instance_(superCls):
+        parameters = getTypeParameters(Class.cast_(superCls))
+        if parameters:
+            return parameters
+    elif ParameterizedType.instance_(superCls):
+        parameters = getActualTypeArguments(ParameterizedType.cast_(superCls))
+        if parameters:
+            return parameters
+
+    parameters = getTypeParameters(cls.getDeclaringClass())
+    if parameters:
+        return parameters
+
+    return []
 
 
 def find_method(cls, name, params):
@@ -537,8 +574,8 @@ def jcc(args):
                     install, dist, debug, jars, version,
                     prefix, root, install_dir, home_dir, use_distutils,
                     shared, compiler, modules, wininst, find_jvm_dll,
-                    arch, generics, resources, imports, egg_info,
-                    extra_setup_args)
+                    arch, generics, resources, imports, use_full_names,
+                    egg_info, extra_setup_args)
     else:
         if imports:
             def walk((include, importset), dirname, names):
@@ -694,8 +731,8 @@ def jcc(args):
                         install, dist, debug, jars, version,
                         prefix, root, install_dir, home_dir, use_distutils,
                         shared, compiler, modules, wininst, find_jvm_dll,
-                        arch, generics, resources, imports, egg_info,
-                        extra_setup_args)
+                        arch, generics, resources, imports, use_full_names,
+                        egg_info, extra_setup_args)
 
 
 def header(env, out, cls, typeset, packages, excludes, generics,
@@ -738,6 +775,11 @@ def header(env, out, cls, typeset, packages, excludes, generics,
         superClsName = superCls.getName()
     elif superCls:
         superClsName = superCls.getName()
+        if generics:
+            for clsParam in getTypeParameters(cls):
+                if Class.instance_(clsParam):
+                    addRequiredTypes(clsParam, typeset, True)
+                    known(clsParam, typeset, declares, packages, excludes, True)
     else:
         superClsName = 'JObject'
 
@@ -776,6 +818,8 @@ def header(env, out, cls, typeset, packages, excludes, generics,
     methods = {}
     protectedMethods = []
     for method in cls.getDeclaredMethods():
+        if method.isSynthetic():
+            continue
         modifiers = method.getModifiers()
         if (Modifier.isPublic(modifiers) or
             method.getName() in listedMethodNames):

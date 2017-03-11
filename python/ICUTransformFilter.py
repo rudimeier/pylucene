@@ -39,8 +39,9 @@
 #
 # ====================================================================
 
-from lucene import PythonTokenFilter, CharTermAttribute
-from icu import Transliterator, UTransPosition
+from org.apache.pylucene.analysis import PythonTokenFilter
+from org.apache.lucene.analysis.tokenattributes import CharTermAttribute
+from icu import UTransPosition
 
 
 class ICUTransformFilter(PythonTokenFilter):

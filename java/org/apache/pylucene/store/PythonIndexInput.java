@@ -17,16 +17,28 @@ package org.apache.pylucene.store;
 
 import java.io.IOException;
 import org.apache.lucene.store.BufferedIndexInput;
+import org.apache.lucene.store.IOContext;
 
 
 public class PythonIndexInput extends BufferedIndexInput {
 
     private long pythonObject;
 
-    public PythonIndexInput()
+    public PythonIndexInput(String resourceDesc)
     {
+        super(resourceDesc);
     }
 
+    public PythonIndexInput(String resourceDesc, int bufferSize)
+    {
+        super(resourceDesc, bufferSize);
+    }
+
+    public PythonIndexInput(String resourceDesc, IOContext context)
+    {
+        super(resourceDesc, context);
+    }
+    
     public void pythonExtension(long pythonObject)
     {
         this.pythonObject = pythonObject;
@@ -44,7 +56,7 @@ public class PythonIndexInput extends BufferedIndexInput {
 
     public native void pythonDecRef();
 
-    public native Object clone();
+    public native PythonIndexInput clone();
     public native long length();
     public native void close()
         throws IOException;

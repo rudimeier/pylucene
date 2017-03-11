@@ -1,7 +1,17 @@
 #!/usr/bin/env python
 
+INDEX_DIR = "IndexFiles.index"
+
 import sys, os, lucene, threading, time
 from datetime import datetime
+
+from java.io import File
+from org.apache.lucene.analysis.miscellaneous import LimitTokenCountAnalyzer
+from org.apache.lucene.analysis.standard import StandardAnalyzer
+from org.apache.lucene.document import Document, Field, FieldType
+from org.apache.lucene.index import FieldInfo, IndexWriter, IndexWriterConfig
+from org.apache.lucene.store import SimpleFSDirectory
+from org.apache.lucene.util import Version
 
 """
 This class is loosely based on the Lucene (java implementation) demo class 
@@ -30,20 +40,36 @@ class IndexFiles(object):
 
         if not os.path.exists(storeDir):
             os.mkdir(storeDir)
-        store = lucene.SimpleFSDirectory(lucene.File(storeDir))
-        writer = lucene.IndexWriter(store, analyzer, True,
-                                    lucene.IndexWriter.MaxFieldLength.LIMITED)
-        writer.setMaxFieldLength(1048576)
+
+        store = SimpleFSDirectory(File(storeDir))
+        analyzer = LimitTokenCountAnalyzer(analyzer, 1048576)
+        config = IndexWriterConfig(Version.LUCENE_CURRENT, analyzer)
+        config.setOpenMode(IndexWriterConfig.OpenMode.CREATE)
+        writer = IndexWriter(store, config)
+
         self.indexDocs(root, writer)
         ticker = Ticker()
-        print 'optimizing index',
+        print 'commit index',
         threading.Thread(target=ticker.run).start()
-        writer.optimize()
+        writer.commit()
         writer.close()
         ticker.tick = False
         print 'done'
 
     def indexDocs(self, root, writer):
+
+        t1 = FieldType()
+        t1.setIndexed(True)
+        t1.setStored(True)
+        t1.setTokenized(False)
+        t1.setIndexOptions(FieldInfo.IndexOptions.DOCS_AND_FREQS)
+        
+        t2 = FieldType()
+        t2.setIndexed(True)
+        t2.setStored(False)
+        t2.setTokenized(True)
+        t2.setIndexOptions(FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
+        
         for root, dirnames, filenames in os.walk(root):
             for filename in filenames:
                 if not filename.endswith('.txt'):
@@ -54,17 +80,11 @@ class IndexFiles(object):
                     file = open(path)
                     contents = unicode(file.read(), 'iso-8859-1')
                     file.close()
-                    doc = lucene.Document()
-                    doc.add(lucene.Field("name", filename,
-                                         lucene.Field.Store.YES,
-                                         lucene.Field.Index.NOT_ANALYZED))
-                    doc.add(lucene.Field("path", path,
-                                         lucene.Field.Store.YES,
-                                         lucene.Field.Index.NOT_ANALYZED))
+                    doc = Document()
+                    doc.add(Field("name", filename, t1))
+                    doc.add(Field("path", root, t1))
                     if len(contents) > 0:
-                        doc.add(lucene.Field("contents", contents,
-                                             lucene.Field.Store.NO,
-                                             lucene.Field.Index.ANALYZED))
+                        doc.add(Field("contents", contents, t2))
                     else:
                         print "warning: no content in %s" % filename
                     writer.addDocument(doc)
@@ -75,12 +95,15 @@ if __name__ == '__main__':
     if len(sys.argv) < 2:
         print IndexFiles.__doc__
         sys.exit(1)
-    lucene.initVM()
+    lucene.initVM(vmargs=['-Djava.awt.headless=true'])
     print 'lucene', lucene.VERSION
     start = datetime.now()
     try:
-        IndexFiles(sys.argv[1], "index", lucene.StandardAnalyzer(lucene.Version.LUCENE_CURRENT))
+        base_dir = os.path.dirname(os.path.abspath(sys.argv[0]))
+        IndexFiles(sys.argv[1], os.path.join(base_dir, INDEX_DIR),
+                   StandardAnalyzer(Version.LUCENE_CURRENT))
         end = datetime.now()
         print end - start
     except Exception, e:
         print "Failed: ", e
+        raise e

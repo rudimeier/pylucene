@@ -21,10 +21,13 @@ try:
 except ImportError, e:
     pass
 
-from unittest import main
+import sys, lucene, unittest
 from BaseTokenStreamTestCase import BaseTokenStreamTestCase
 
-from lucene import *
+from java.io import StringReader
+from org.apache.lucene.util import Version
+from org.apache.lucene.analysis.core import KeywordTokenizer
+from org.apache.pylucene.analysis import PythonTokenFilter
 
 
 class TestICUTransformFilter(BaseTokenStreamTestCase):
@@ -74,19 +77,18 @@ class TestICUTransformFilter(BaseTokenStreamTestCase):
 
 
 if __name__ == "__main__":
-    import sys, lucene
     try:
         import icu
     except ImportError:
         pass
     else:
-        lucene.initVM()
+        lucene.initVM(vmargs=['-Djava.awt.headless=true'])
         if '-loop' in sys.argv:
             sys.argv.remove('-loop')
             while True:
                 try:
-                    main()
+                    unittest.main()
                 except:
                     pass
         else:
-             main()
+             unittest.main()

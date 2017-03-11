@@ -1,6 +1,35 @@
+Version 2.20 -> 2.21
+--------------------
+ - improved through-layer Python error handling (with Lee Skillen)
+
+Version 2.19 -> 2.20
+--------------------
+ - added support for java varargs by reconstructing array from last parameters
+
+Version 2.18 -> 2.19
+--------------------
+ - fixed bug with missing class parameters when fixed by declaration
+ - improved runtime support for fixed class generic parameters
+ - improved runtime support for fixed class array generic parameters
+
+Version 2.17 -> 2.18
+--------------------
+ - fixed bug PYLUCENE-26 (Martin Anon)
+ - added support for building with setuptools >= 1.1.6
+
+Version 2.16 -> 2.17
+--------------------
+ - added support for detecting and running with Oracle JDK 7 on Mac OS X
+ - added skipping of synthetic methods
+
+Version 2.15 -> 2.16
+--------------------
+ - improved parseArgs() to let nested arrays pass through
+ - added 'min', 'max' and 'PREFIX' to reserved words list to placate Visual C++
+
 Version 2.14 -> 2.15
 --------------------
- - improved JCC build on Linux by mokey patching setuptools (Caleb Burns)
+ - improved JCC build on Linux by monkey patching setuptools (Caleb Burns)
  - fixed bug with wrapping arrays coming out of generic iterators
  - added support for wrapping non-public methods by listing them as class:method
  - fixed bug with wrapping wrong clone() method in python extensions classes

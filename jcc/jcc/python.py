@@ -20,6 +20,7 @@ from cpp import RENAME_METHOD_SUFFIX, RENAME_FIELD_SUFFIX
 from cpp import cppname, cppnames, absname, typename, findClass
 from cpp import line, signature, find_method, split_pkg, sort
 from cpp import Modifier, Class, Method
+from cpp import getActualTypeArguments, getTypeParameters
 from config import INCLUDES, CFLAGS, DEBUG_CFLAGS, LFLAGS, IMPLIB_LFLAGS, \
     SHARED, VERSION as JCC_VER
 
@@ -71,29 +72,6 @@ def is_boxed(clsName):
 
 def is_unboxed(clsName):
     return BOXED.get(clsName, (False, False))[1]
-
-
-def getTypeParameters(cls):
-
-    while True:
-        parameters = cls.getTypeParameters()
-        if parameters:
-            return parameters
-        cls = cls.getDeclaringClass()
-        if cls is None:
-            return []
-
-
-def getActualTypeArguments(pt):
-
-    while True:
-        arguments = pt.getActualTypeArguments()
-        if arguments:
-            return arguments
-        pt = pt.getOwnerType()
-        if pt is None or not ParameterizedType.instance_(pt):
-            return []
-        pt = ParameterizedType.cast_(pt)
 
 
 def parseArgs(params, current, generics, genericParams=None):
@@ -209,6 +187,28 @@ def construct(out, indent, cls, inCase, constructor, names, generics):
     line(out, indent, 'INT_CALL(object = %s(%s));',
          cppname(names[-1]), ', '.join(['a%d' %(i) for i in xrange(count)]))
     line(out, indent, 'self->object = object;')
+
+    if generics:
+        clsParams = getTypeParameters(cls)
+        i = 0
+        for clsParam in clsParams:
+            if Class.instance_(clsParam):
+                cls = Class.cast_(clsParam)
+                if cls.isArray():
+                    cls = cls.getComponentType()
+                    if cls.isArray():
+                        clsNames = 'java.lang.Object'.split('.')
+                        clsArg = '&%s::PY_TYPE(%s)' %(absname(cppnames(clsNames[:-1])), cppname(clsNames[-1]))
+                    elif cls.isPrimitive():
+                        clsArg = 'PY_TYPE(JArray%s)' %(cls.getName().capitalize())
+                    else:
+                        clsArg = 'PY_TYPE(JArrayObject)'
+                else:
+                    clsNames = cls.getName().split('.')
+                    clsArg = '&%s::PY_TYPE(%s)' %(absname(cppnames(clsNames[:-1])), cppname(clsNames[-1]))
+                line(out, indent, 'self->parameters[%d] = %s;', i, clsArg)
+            i += 1
+    
     if inCase:
         line(out, indent, 'break;')
 
@@ -1017,8 +1017,10 @@ def python(env, out_h, out, cls, superCls, names, superNames,
 
     if clsParams:
         clsArgs = []
+        i = 0
         for clsParam in clsParams:
-            clsArgs.append("PyTypeObject *%s" %(clsParam.getName()))
+            clsArgs.append("PyTypeObject *p%d" %(i))
+            i += 1
         line(out, indent, 
              "PyObject *t_%s::wrap_Object(const %s& object, %s)",
              cppname(names[-1]), names[-1], ', '.join(clsArgs))
@@ -1031,8 +1033,8 @@ def python(env, out_h, out, cls, superCls, names, superNames,
              names[-1], names[-1])
         i = 0;
         for clsParam in clsParams:
-            line(out, indent + 2, "self->parameters[%d] = %s;",
-                 i, clsParam.getName())
+            line(out, indent + 2, "self->parameters[%d] = p%d;",
+                 i, i)
             i += 1
         line(out, indent + 1, "}")
         line(out, indent + 1, "return obj;");
@@ -1051,8 +1053,8 @@ def python(env, out_h, out, cls, superCls, names, superNames,
              names[-1], names[-1])
         i = 0;
         for clsParam in clsParams:
-            line(out, indent + 2, "self->parameters[%d] = %s;",
-                 i, clsParam.getName())
+            line(out, indent + 2, "self->parameters[%d] = p%d;",
+                 i, i)
             i += 1
         line(out, indent + 1, "}")
         line(out, indent + 1, "return obj;");
@@ -1594,8 +1596,7 @@ def module(out, allInOne, classes, imports, cppdir, moduleName,
 def compile(env, jccPath, output, moduleName, install, dist, debug, jars,
             version, prefix, root, install_dir, home_dir, use_distutils,
             shared, compiler, modules, wininst, find_jvm_dll, arch, generics,
-            resources, imports, egg_info, extra_setup_args):
-
+            resources, imports, use_full_names, egg_info, extra_setup_args):
     try:
         if use_distutils:
             raise ImportError
@@ -1721,6 +1722,8 @@ def compile(env, jccPath, output, moduleName, install, dist, debug, jars,
     for import_ in imports:
         line(out, 0, 'from %s._%s import *', import_.__name__, import_.__name__)
     line(out, 0, 'from %s import *', extname)
+    if use_full_names:
+        line(out, 0, 'from java.io import PrintWriter, StringWriter')
     out.close()
 
     includes = [os.path.join(output, extname),

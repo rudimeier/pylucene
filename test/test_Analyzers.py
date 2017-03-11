@@ -12,9 +12,17 @@
 #   limitations under the License.
 # ====================================================================
 
-from unittest import main
+import sys, lucene, unittest
+
 from BaseTokenStreamTestCase import BaseTokenStreamTestCase
-from lucene import *
+from lucene import JArray
+
+from java.io import StringReader
+from org.apache.lucene.analysis.core import \
+    SimpleAnalyzer, WhitespaceAnalyzer, StopAnalyzer, WhitespaceTokenizer
+from org.apache.lucene.analysis.tokenattributes import PayloadAttribute
+from org.apache.lucene.util import Version, BytesRef
+from org.apache.pylucene.analysis import PythonTokenFilter
 
 
 class AnalyzersTestCase(BaseTokenStreamTestCase):
@@ -24,7 +32,7 @@ class AnalyzersTestCase(BaseTokenStreamTestCase):
 
     def testSimple(self):
 
-        a = SimpleAnalyzer()
+        a = SimpleAnalyzer(Version.LUCENE_CURRENT)
         self._assertAnalyzesTo(a, "foo bar FOO BAR", 
                                [ "foo", "bar", "foo", "bar" ])
         self._assertAnalyzesTo(a, "foo      bar .  FOO <> BAR", 
@@ -45,7 +53,7 @@ class AnalyzersTestCase(BaseTokenStreamTestCase):
 
     def testNull(self):
 
-        a = WhitespaceAnalyzer()
+        a = WhitespaceAnalyzer(Version.LUCENE_CURRENT)
         self._assertAnalyzesTo(a, "foo bar FOO BAR", 
                                [ "foo", "bar", "FOO", "BAR" ])
         self._assertAnalyzesTo(a, "foo      bar .  FOO <> BAR", 
@@ -73,23 +81,24 @@ class AnalyzersTestCase(BaseTokenStreamTestCase):
 
     def _verifyPayload(self, ts):
 
+        ts.reset()
         payloadAtt = ts.getAttribute(PayloadAttribute.class_)
         b = 0
         while True:
             b += 1
             if not ts.incrementToken():
                 break
-            self.assertEqual(b, payloadAtt.getPayload().toByteArray()[0])
+            self.assertEqual(b, payloadAtt.getPayload().bytes[0])
 
     # Make sure old style next() calls result in a new copy of payloads
     def testPayloadCopy(self):
 
         s = "how now brown cow"
-        ts = WhitespaceTokenizer(StringReader(s))
+        ts = WhitespaceTokenizer(Version.LUCENE_CURRENT, StringReader(s))
         ts = PayloadSetter(ts)
         self._verifyPayload(ts)
 
-        ts = WhitespaceTokenizer(StringReader(s))
+        ts = WhitespaceTokenizer(Version.LUCENE_CURRENT, StringReader(s))
         ts = PayloadSetter(ts)
         self._verifyPayload(ts)
 
@@ -102,7 +111,7 @@ class PayloadSetter(PythonTokenFilter):
         self.input = input
         self.payloadAtt = self.addAttribute(PayloadAttribute.class_)
         self.data = JArray('byte')(1)
-        self.p = Payload(self.data, 0, 1)
+        self.p = BytesRef(self.data, 0, 1)
 
     def incrementToken(self):
 
@@ -116,14 +125,13 @@ class PayloadSetter(PythonTokenFilter):
 
 
 if __name__ == "__main__":
-    import sys, lucene
-    lucene.initVM()
+    lucene.initVM(vmargs=['-Djava.awt.headless=true'])
     if '-loop' in sys.argv:
         sys.argv.remove('-loop')
         while True:
             try:
-                main()
+                unittest.main()
             except:
                 pass
     else:
-         main()
+         unittest.main()

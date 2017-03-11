@@ -12,29 +12,32 @@
 #   limitations under the License.
 # ====================================================================
 
-from unittest import TestCase, main
-from lucene import *
+import sys, lucene, unittest
+from PyLuceneTestCase import PyLuceneTestCase
+
+from org.apache.lucene.analysis.core import SimpleAnalyzer
+from org.apache.lucene.document import Document, Field, TextField
+from org.apache.lucene.queryparser.classic import QueryParser
+from org.apache.lucene.util import Version
 
 
-class NotTestCase(TestCase):
+class NotTestCase(PyLuceneTestCase):
     """
     Unit tests ported from Java Lucene
     """
   
     def testNot(self):
 
-        store = RAMDirectory()
-        writer = IndexWriter(store, SimpleAnalyzer(Version.LUCENE_CURRENT),
-                             True, IndexWriter.MaxFieldLength.LIMITED)
+        writer = self.getWriter(analyzer=SimpleAnalyzer(Version.LUCENE_CURRENT))
 
         d1 = Document()
-        d1.add(Field("field", "a b", Field.Store.YES, Field.Index.ANALYZED))
+        d1.add(Field("field", "a b", TextField.TYPE_STORED))
 
         writer.addDocument(d1)
-        writer.optimize()
+        writer.commit()
         writer.close()
 
-        searcher = IndexSearcher(store, True)
+        searcher = self.getSearcher()
         query = QueryParser(Version.LUCENE_CURRENT, "field",
                             SimpleAnalyzer(Version.LUCENE_CURRENT)).parse("a NOT b")
 
@@ -43,14 +46,13 @@ class NotTestCase(TestCase):
 
 
 if __name__ == "__main__":
-    import sys, lucene
-    lucene.initVM()
+    lucene.initVM(vmargs=['-Djava.awt.headless=true'])
     if '-loop' in sys.argv:
         sys.argv.remove('-loop')
         while True:
             try:
-                main()
+                unittest.main()
             except:
                 pass
     else:
-         main()
+         unittest.main()

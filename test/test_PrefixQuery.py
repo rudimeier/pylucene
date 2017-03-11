@@ -12,32 +12,33 @@
 #   limitations under the License.
 # ====================================================================
 
-from unittest import TestCase, main
-from lucene import *
+import sys, lucene, unittest
+from PyLuceneTestCase import PyLuceneTestCase
+
+from org.apache.lucene.document import Document, Field, StringField
+from org.apache.lucene.index import Term
+from org.apache.lucene.search import PrefixQuery
 
 
-class PrefixQueryTestCase(TestCase):
+class PrefixQueryTestCase(PyLuceneTestCase):
     """
     Unit tests ported from Java Lucene
     """
 
     def testPrefixQuery(self):
 
-        directory = RAMDirectory()
+        writer = self.getWriter()
 
         categories = ["/Computers", "/Computers/Mac", "/Computers/Windows"]
-        writer = IndexWriter(directory, WhitespaceAnalyzer(), True,
-                             IndexWriter.MaxFieldLength.LIMITED)
         for category in categories:
             doc = Document()
-            doc.add(Field("category", category,
-                          Field.Store.YES, Field.Index.NOT_ANALYZED))
+            doc.add(Field("category", category, StringField.TYPE_STORED))
             writer.addDocument(doc)
 
         writer.close()
 
         query = PrefixQuery(Term("category", "/Computers"))
-        searcher = IndexSearcher(directory, True)
+        searcher = self.getSearcher()
         topDocs = searcher.search(query, 50)
         self.assertEqual(3, topDocs.totalHits,
                          "All documents in /Computers category and below")
@@ -48,14 +49,13 @@ class PrefixQueryTestCase(TestCase):
 
 
 if __name__ == "__main__":
-    import sys, lucene
-    lucene.initVM()
+    lucene.initVM(vmargs=['-Djava.awt.headless=true'])
     if '-loop' in sys.argv:
         sys.argv.remove('-loop')
         while True:
             try:
-                main()
+                unittest.main()
             except:
                 pass
     else:
-         main()
+         unittest.main()

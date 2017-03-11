@@ -12,19 +12,27 @@
 #   limitations under the License.
 # ====================================================================
 
-from unittest import TestCase, main
-from lucene import *
+import sys, lucene, unittest
+from PyLuceneTestCase import PyLuceneTestCase
+
+from org.apache.lucene.document import Document, Field, StringField, TextField
+from org.apache.lucene.index import IndexWriterConfig
+from org.apache.lucene.search import TermRangeQuery
 
 
-class TermRangeQueryTestCase(TestCase):
+class TermRangeQueryTestCase(PyLuceneTestCase):
     """
     Unit tests ported from Java Lucene
     """
 
+    def setUp(self):
+        super(TermRangeQueryTestCase, self).setUp()
+
+        self.docCount = 0
+
     def _initializeIndex(self, values):
 
-        writer = IndexWriter(self.dir, WhitespaceAnalyzer(), True,
-                             IndexWriter.MaxFieldLength.LIMITED)
+        writer = self.getWriter()
         for value in values:
             self._insertDoc(writer, value)
         writer.close()
@@ -34,85 +42,78 @@ class TermRangeQueryTestCase(TestCase):
         doc = Document()
 
         doc.add(Field("id", "id" + str(self.docCount),
-                      Field.Store.YES, Field.Index.NOT_ANALYZED))
+                      StringField.TYPE_STORED))
         doc.add(Field("content", content,
-                      Field.Store.NO, Field.Index.ANALYZED))
+                      TextField.TYPE_NOT_STORED))
 
         writer.addDocument(doc)
         self.docCount += 1
 
     def _addDoc(self, content):
 
-        writer = IndexWriter(self.dir, WhitespaceAnalyzer(), False,
-                             IndexWriter.MaxFieldLength.LIMITED)
+        writer = self.getWriter(open_mode=IndexWriterConfig.OpenMode.APPEND)
         self._insertDoc(writer, content)
         writer.close()
 
-    def setUp(self):
-
-        self.docCount = 0
-        self.dir = RAMDirectory()
-
     def testExclusive(self):
 
-        query = TermRangeQuery("content", "A", "C", False, False)
+        query = TermRangeQuery.newStringRange("content", "A", "C", False, False)
 
         self._initializeIndex(["A", "B", "C", "D"])
-        searcher = IndexSearcher(self.dir, True)
+        searcher = self.getSearcher()
         topDocs = searcher.search(query, 50)
         self.assertEqual(1, topDocs.totalHits,
                          "A,B,C,D, only B in range")
-        searcher.close()
+        del searcher
 
         self._initializeIndex(["A", "B", "D"])
-        searcher = IndexSearcher(self.dir, True)
+        searcher = self.getSearcher()
         topDocs = searcher.search(query, 50)
         self.assertEqual(1, topDocs.totalHits,
                          "A,B,D, only B in range")
-        searcher.close()
+        del searcher
 
         self._addDoc("C")
-        searcher = IndexSearcher(self.dir, True)
+        searcher = self.getSearcher()
         topDocs = searcher.search(query, 50)
         self.assertEqual(1, topDocs.totalHits,
                          "C added, still only B in range")
-        searcher.close()
+        del searcher
 
     def testInclusive(self):
 
-        query = TermRangeQuery("content", "A", "C", True, True)
+        query = TermRangeQuery.newStringRange("content", "A", "C", True, True)
 
         self._initializeIndex(["A", "B", "C", "D"])
-        searcher = IndexSearcher(self.dir, True)
+        searcher = self.getSearcher()
         topDocs = searcher.search(query, 50)
         self.assertEqual(3, topDocs.totalHits,
                          "A,B,C,D - A,B,C in range")
-        searcher.close()
+        del searcher
 
         self._initializeIndex(["A", "B", "D"])
-        searcher = IndexSearcher(self.dir, True)
+        searcher = self.getSearcher()
         topDocs = searcher.search(query, 50)
         self.assertEqual(2, topDocs.totalHits,
                          "A,B,D - A and B in range")
-        searcher.close()
+        del searcher
 
         self._addDoc("C")
-        searcher = IndexSearcher(self.dir, True)
+        searcher = self.getSearcher()
         topDocs = searcher.search(query, 50)
         self.assertEqual(3, topDocs.totalHits,
                          "C added - A, B, C in range")
-        searcher.close()
+        del searcher
 
 
 if __name__ == "__main__":
-    import sys, lucene
-    lucene.initVM()
+    lucene.initVM(vmargs=['-Djava.awt.headless=true'])
     if '-loop' in sys.argv:
         sys.argv.remove('-loop')
         while True:
             try:
-                main()
+                unittest.main()
             except:
                 pass
     else:
-         main()
+         unittest.main()

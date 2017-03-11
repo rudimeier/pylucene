@@ -15,10 +15,10 @@
 # site-packages directory.
 #
 
-VERSION=3.6.2-1
+VERSION=4.10.1-1
 LUCENE_SVN_VER=HEAD
-LUCENE_VER=3.6.2
-LUCENE_SVN=http://svn.apache.org/repos/asf/lucene/dev/tags/lucene_solr_3_6_2
+LUCENE_VER=4.10.1
+LUCENE_SVN=http://svn.apache.org/repos/asf/lucene/dev/tags/lucene_solr_4_10_1
 PYLUCENE:=$(shell pwd)
 LUCENE_SRC=lucene-java-$(LUCENE_VER)
 LUCENE=$(LUCENE_SRC)/lucene
@@ -50,49 +50,42 @@ LUCENE=$(LUCENE_SRC)/lucene
 #ANT=ant
 #PYTHON=$(PREFIX_PYTHON)/bin/python
 #JCC=$(PYTHON) -m jcc.__main__ --shared --arch x86_64
-#NUM_FILES=4
+#NUM_FILES=8
 
 # Mac OS X 10.6 (MacPorts 1.8.0 64-bit Python 2.7, Java 1.6)
 #PREFIX_PYTHON=/opt/local
 #ANT=ant
 #PYTHON=$(PREFIX_PYTHON)/bin/python
 #JCC=$(PYTHON) -m jcc --shared --arch x86_64
-#NUM_FILES=4
-
-# Mac OS X 10.6 (MacPorts 1.8.0 64-bit Python 2.6, Java 1.6)
-#PREFIX_PYTHON=/opt/local
-#ANT=ant
-#PYTHON=$(PREFIX_PYTHON)/bin/python
-#JCC=$(PYTHON) -m jcc.__main__ --shared --arch x86_64
-#NUM_FILES=4
+#NUM_FILES=8
 
 # Mac OS X 10.6 (64-bit and 32-bit Python 2.6 together, Java 1.6)
 #PREFIX_PYTHON=/usr
 #ANT=ant
 #PYTHON=$(PREFIX_PYTHON)/bin/python
 #JCC=$(PYTHON) -m jcc.__main__ --shared --arch x86_64 --arch i386
-#NUM_FILES=4
+#NUM_FILES=8
 
 # Mac OS X 10.5 (32-bit Python 2.5, Java 1.5)
 #PREFIX_PYTHON=/usr
 #ANT=ant
 #PYTHON=$(PREFIX_PYTHON)/bin/python
 #JCC=$(PYTHON) -m jcc --shared
-#NUM_FILES=4
+#NUM_FILES=8
 
 # Mac OS X  (Python 2.3.5, Java 1.5, setuptools 0.6c7, Intel Mac OS X 10.4)
 #PREFIX_PYTHON=/usr
 #ANT=ant
 #PYTHON=$(PREFIX_PYTHON)/bin/python
 #JCC=$(PYTHON) /System/Library/Frameworks/Python.framework/Versions/2.3/lib/python2.3/site-packages/JCC-2.3-py2.3-macosx-10.4-i386.egg/jcc/__init__.py
-#NUM_FILES=4
+#NUM_FILES=8
 
 # Mac OS X  (Python 2.3.5, Java 1.5, setuptools 0.6c7, PPC Mac OS X 10.4)
 #PREFIX_PYTHON=/usr
 #ANT=ant
 #PYTHON=$(PREFIX_PYTHON)/bin/python
 #JCC=$(PYTHON) /System/Library/Frameworks/Python.framework/Versions/2.3/lib/python2.3/site-packages/JCC-2.3-py2.3-macosx-10.4-ppc.egg/jcc/__init__.py
-#NUM_FILES=4
+#NUM_FILES=8
 
 # Linux     (Ubuntu 11.10 64-bit, Python 2.7.2, OpenJDK 1.7, setuptools 0.6.16)
 # Be sure to also set JDK['linux2'] in jcc's setup.py to the JAVA_HOME value
@@ -101,56 +94,56 @@ LUCENE=$(LUCENE_SRC)/lucene
 #ANT=JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64 /usr/bin/ant
 #PYTHON=$(PREFIX_PYTHON)/bin/python
 #JCC=$(PYTHON) -m jcc --shared
-#NUM_FILES=4
+#NUM_FILES=8
 
 # Linux     (Ubuntu 8.10 64-bit, Python 2.5.2, OpenJDK 1.6, setuptools 0.6c9)
 #PREFIX_PYTHON=/usr
 #ANT=ant
 #PYTHON=$(PREFIX_PYTHON)/bin/python
 #JCC=$(PYTHON) -m jcc --shared
-#NUM_FILES=4
+#NUM_FILES=8
 
 # Linux     (Ubuntu 6.06, Python 2.4, Java 1.5, no setuptools)
 #PREFIX_PYTHON=/usr
 #ANT=ant
 #PYTHON=$(PREFIX_PYTHON)/bin/python
 #JCC=$(PYTHON) $(PREFIX_PYTHON)/lib/python2.4/site-packages/jcc/__init__.py
-#NUM_FILES=4
+#NUM_FILES=8
 
 # FreeBSD
 #PREFIX_PYTHON=/usr
 #ANT=ant
 #PYTHON=$(PREFIX_PYTHON)/bin/python
 #JCC=$(PYTHON) -m jcc
-#NUM_FILES=4
+#NUM_FILES=8
 
 # Solaris   (Solaris 11, Python 2.4 32-bit, Sun Studio 12, Java 1.6)
 #PREFIX_PYTHON=/usr
 #ANT=/usr/local/apache-ant-1.7.0/bin/ant
 #PYTHON=$(PREFIX_PYTHON)/bin/python
 #JCC=$(PYTHON) $(PREFIX_PYTHON)/lib/python2.4/site-packages/jcc/__init__.py
-#NUM_FILES=4
+#NUM_FILES=8
 
 # Windows   (Win32, Python 2.5.1, Java 1.6, ant 1.7.0)
 #PREFIX_PYTHON=/cygdrive/o/Python-2.5.2/PCbuild
 #ANT=JAVA_HOME=o:\\Java\\jdk1.6.0_02 /cygdrive/o/java/apache-ant-1.7.0/bin/ant
 #PYTHON=$(PREFIX_PYTHON)/python.exe
 #JCC=$(PYTHON) -m jcc --shared
-#NUM_FILES=4
+#NUM_FILES=8
 
 # Windows   (Win32, msys/MinGW, Python 2.6.4, Java 1.6, ant 1.7.1 (WinAnt))
 #PREFIX_PYTHON=/c/Python26
 #ANT=JAVA_HOME="c:\\Program Files\\Java\\jdk1.6.0_18" "/c/Program Files/WinAnt/bin/ant"
 #PYTHON=$(PREFIX_PYTHON)/python.exe
 #JCC=$(PYTHON) -m jcc.__main__ --shared --compiler mingw32
-#NUM_FILES=4
+#NUM_FILES=8
 
 # Windows   (Win32, Python 2.7, Java 1.6, ant 1.8.1, Java not on PATH)
 #PREFIX_PYTHON=/cygdrive/c/Python27
 #ANT=JAVA_HOME=c:\\jdk1.6.0_22 /cygdrive/c/java/apache-ant-1.8.1/bin/ant
 #PYTHON=$(PREFIX_PYTHON)/python.exe
 #JCC=$(PYTHON) -m jcc --shared --find-jvm-dll
-#NUM_FILES=4
+#NUM_FILES=8
 
 JARS=$(LUCENE_JAR)
 
@@ -160,12 +153,16 @@ JARS+=$(MEMORY_JAR)             # single-document memory index
 JARS+=$(HIGHLIGHTER_JAR)        # needs memory contrib
 JARS+=$(EXTENSIONS_JAR)         # needs highlighter contrib
 JARS+=$(QUERIES_JAR)            # regex and other contrib queries
+JARS+=$(QUERYPARSER_JAR)        # query parser
+JARS+=$(SANDBOX_JAR)            # needed by query parser
 #JARS+=$(SMARTCN_JAR)            # smart chinese analyzer
+JARS+=$(STEMPEL_JAR)            # polish analyzer and stemmer
 #JARS+=$(SPATIAL_JAR)            # spatial lucene
 JARS+=$(GROUPING_JAR)           # grouping module
 JARS+=$(JOIN_JAR)               # join module
 JARS+=$(FACET_JAR)              # facet module
-JARS+=$(SPELLCHECKER_JAR)       # spellchecker/suggest module
+JARS+=$(SUGGEST_JAR)            # suggest/spell module
+JARS+=$(EXPRESSIONS_JAR)        # expressions module
 
 
 #
@@ -181,17 +178,26 @@ endif
 DEFINES=-DPYLUCENE_VER="\"$(VERSION)\"" -DLUCENE_VER="\"$(LUCENE_VER)\""
 
 LUCENE_JAR=$(LUCENE)/build/core/lucene-core-$(LUCENE_VER).jar
-ANALYZERS_JAR=$(LUCENE)/build/contrib/analyzers/common/lucene-analyzers-$(LUCENE_VER).jar
-HIGHLIGHTER_JAR=$(LUCENE)/build/contrib/highlighter/lucene-highlighter-$(LUCENE_VER).jar
-MEMORY_JAR=$(LUCENE)/build/contrib/memory/lucene-memory-$(LUCENE_VER).jar
-QUERIES_JAR=$(LUCENE)/build/contrib/queries/lucene-queries-$(LUCENE_VER).jar
+ANALYZERS_JAR=$(LUCENE)/build/analysis/common/lucene-analyzers-common-$(LUCENE_VER).jar
+HIGHLIGHTER_JAR=$(LUCENE)/build/highlighter/lucene-highlighter-$(LUCENE_VER).jar
+MEMORY_JAR=$(LUCENE)/build/memory/lucene-memory-$(LUCENE_VER).jar
 EXTENSIONS_JAR=build/jar/extensions.jar
-SMARTCN_JAR=$(LUCENE)/build/contrib/analyzers/smartcn/lucene-smartcn-$(LUCENE_VER).jar
-SPATIAL_JAR=$(LUCENE)/build/contrib/spatial/lucene-spatial-$(LUCENE_VER).jar
-GROUPING_JAR=$(LUCENE)/build/contrib/grouping/lucene-grouping-$(LUCENE_VER).jar
-JOIN_JAR=$(LUCENE)/build/contrib/join/lucene-join-$(LUCENE_VER).jar
-FACET_JAR=$(LUCENE)/build/contrib/facet/lucene-facet-$(LUCENE_VER).jar
-SPELLCHECKER_JAR=$(LUCENE)/build/contrib/spellchecker/lucene-spellchecker-$(LUCENE_VER).jar
+QUERIES_JAR=$(LUCENE)/build/queries/lucene-queries-$(LUCENE_VER).jar
+QUERYPARSER_JAR=$(LUCENE)/build/queryparser/lucene-queryparser-$(LUCENE_VER).jar
+SANDBOX_JAR=$(LUCENE)/build/sandbox/lucene-sandbox-$(LUCENE_VER).jar
+SMARTCN_JAR=$(LUCENE)/build/analysis/smartcn/lucene-analyzers-smartcn-$(LUCENE_VER).jar
+STEMPEL_JAR=$(LUCENE)/build/analysis/stempel/lucene-analyzers-stempel-$(LUCENE_VER).jar
+SPATIAL_JAR=$(LUCENE)/build/spatial/lucene-spatial-$(LUCENE_VER).jar
+GROUPING_JAR=$(LUCENE)/build/grouping/lucene-grouping-$(LUCENE_VER).jar
+JOIN_JAR=$(LUCENE)/build/join/lucene-join-$(LUCENE_VER).jar
+FACET_JAR=$(LUCENE)/build/facet/lucene-facet-$(LUCENE_VER).jar
+SUGGEST_JAR=$(LUCENE)/build/suggest/lucene-suggest-$(LUCENE_VER).jar
+EXPRESSIONS_JAR=$(LUCENE)/build/expressions/lucene-expressions-$(LUCENE_VER).jar
+
+MISC_JAR=$(LUCENE)/build/misc/lucene-misc-$(LUCENE_VER).jar
+ANTLR_JAR=$(LUCENE)/expressions/lib/antlr-runtime-3.5.jar
+ASM_JAR=$(LUCENE)/expressions/lib/asm-4.1.jar
+ASM_COMMONS_JAR=$(LUCENE)/expressions/lib/asm-commons-4.1.jar
 
 ICUPKG:=$(shell which icupkg)
 
@@ -201,13 +207,22 @@ ICUPKG:=$(shell which icupkg)
 default: all
 
 $(LUCENE_SRC):
-	mkdir -p $(LUCENE_SRC)
+	svn $(SVNOP) --depth files -r $(LUCENE_SVN_VER) $(LUCENE_SVN) $(LUCENE_SRC)
 	svn $(SVNOP) -r $(LUCENE_SVN_VER) $(LUCENE_SVN)/lucene $(LUCENE_SRC)/lucene
 
 sources: $(LUCENE_SRC)
 
 ivy:
-	cd $(LUCENE); ($(ANT) ivy-fail || $(ANT) ivy-bootstrap)
+ifeq ($(ANT),)
+	$(error ANT is not defined, please edit Makefile as required at top)
+else ifeq ($(PYTHON),)
+	$(error PYTHON is not defined, please edit Makefile as required at top)
+else ifeq ($(JCC),)
+	$(error JCC is not defined, please edit Makefile as required at top)
+else ifeq ($(NUM_FILES),)
+	$(error NUM_FILES is not defined, please edit Makefile as required at top)
+endif
+	cd $(LUCENE); ($(ANT) ivy-availability-check || $(ANT) ivy-bootstrap)
 
 to-orig: sources
 	mkdir -p $(LUCENE)-orig
@@ -225,51 +240,70 @@ $(LUCENE_JAR): $(LUCENE)
 	cd $(LUCENE); $(ANT) -Dversion=$(LUCENE_VER)
 
 $(ANALYZERS_JAR): $(LUCENE_JAR)
-	cd $(LUCENE)/contrib/analyzers/common; $(ANT) -Dversion=$(LUCENE_VER)
+	cd $(LUCENE)/analysis; $(ANT) -Dversion=$(LUCENE_VER) compile
 
 $(MEMORY_JAR): $(LUCENE_JAR)
-	cd $(LUCENE)/contrib/memory; $(ANT) -Dversion=$(LUCENE_VER)
+	cd $(LUCENE)/memory; $(ANT) -Dversion=$(LUCENE_VER)
 
 $(HIGHLIGHTER_JAR): $(LUCENE_JAR)
-	cd $(LUCENE)/contrib/highlighter; $(ANT) -Dversion=$(LUCENE_VER)
+	cd $(LUCENE)/highlighter; $(ANT) -Dversion=$(LUCENE_VER)
 
 $(QUERIES_JAR): $(LUCENE_JAR)
-	cd $(LUCENE)/contrib/queries; $(ANT) -Dversion=$(LUCENE_VER)
+	cd $(LUCENE)/queries; $(ANT) -Dversion=$(LUCENE_VER)
+
+$(QUERYPARSER_JAR): $(LUCENE_JAR)
+	cd $(LUCENE)/queryparser; $(ANT) -Dversion=$(LUCENE_VER)	
+
+$(SANDBOX_JAR): $(LUCENE_JAR)
+	cd $(LUCENE)/sandbox; $(ANT) -Dversion=$(LUCENE_VER)
 
 $(EXTENSIONS_JAR): $(LUCENE_JAR)
-	$(ANT) -f extensions.xml -Dlucene.dir=$(LUCENE)
+	$(ANT) -f extensions.xml -Dlucene.dir=$(LUCENE_SRC)
 
 $(SMARTCN_JAR): $(LUCENE_JAR)
-	cd $(LUCENE)/contrib/analyzers/smartcn; $(ANT) -Dversion=$(LUCENE_VER)
+	cd $(LUCENE)/analysis/smartcn; $(ANT) -Dversion=$(LUCENE_VER)
+
+$(STEMPEL_JAR): $(LUCENE_JAR)
+	cd $(LUCENE)/analysis/stempel; $(ANT) -Dversion=$(LUCENE_VER)
 
 $(SPATIAL_JAR): $(LUCENE_JAR)
-	cd $(LUCENE)/contrib/spatial; $(ANT) -Dversion=$(LUCENE_VER)
+	cd $(LUCENE)/spatial; $(ANT) -Dversion=$(LUCENE_VER)
 
 $(GROUPING_JAR): $(LUCENE_JAR)
-	cd $(LUCENE)/contrib/grouping; $(ANT) -Dversion=$(LUCENE_VER)
+	cd $(LUCENE)/grouping; $(ANT) -Dversion=$(LUCENE_VER)
 
 $(JOIN_JAR): $(LUCENE_JAR)
-	cd $(LUCENE)/contrib/join; $(ANT) -Dversion=$(LUCENE_VER)
+	cd $(LUCENE)/join; $(ANT) -Dversion=$(LUCENE_VER)
 
 $(FACET_JAR): $(LUCENE_JAR)
-	cd $(LUCENE)/contrib/facet; $(ANT) -Dversion=$(LUCENE_VER)
+	cd $(LUCENE)/facet; $(ANT) -Dversion=$(LUCENE_VER)
 
-$(SPELLCHECKER_JAR): $(LUCENE_JAR)
-	cd $(LUCENE)/contrib/spellchecker; $(ANT) -Dversion=$(LUCENE_VER)
+$(SUGGEST_JAR): $(LUCENE_JAR)
+	cd $(LUCENE)/suggest; $(ANT) -Dversion=$(LUCENE_VER)
+
+$(EXPRESSIONS_JAR): $(LUCENE_JAR)
+	cd $(LUCENE)/expressions; $(ANT) -Dversion=$(LUCENE_VER)
+
+$(MISC_JAR): $(LUCENE_JAR)
+	cd $(LUCENE)/misc; $(ANT) -Dversion=$(LUCENE_VER)
 
 JCCFLAGS?=
 
-jars: $(JARS)
+jars: $(JARS) $(MISC_JAR) $(ANTLR_JAR) $(ASM_JAR) $(ASM_COMMONS)
 
 
 ifneq ($(ICUPKG),)
 
-RESOURCES=--resources $(LUCENE)/contrib/icu/src/resources
+ICURES= $(LUCENE)/analysis/icu/src/resources
+RESOURCES=--resources $(ICURES)
+
+ifneq ($(PYTHON),)
 ENDIANNESS:=$(shell $(PYTHON) -c "import struct; print struct.pack('h', 1) == '\000\001' and 'b' or 'l'")
+endif
 
-resources: $(LUCENE)/contrib/icu/src/resources/org/apache/lucene/analysis/icu/utr30.dat
+resources: $(ICURES)/org/apache/lucene/analysis/icu/utr30.dat
 
-$(LUCENE)/contrib/icu/src/resources/org/apache/lucene/analysis/icu/utr30.dat: $(LUCENE)/contrib/icu/src/resources/org/apache/lucene/analysis/icu/utr30.nrm
+$(ICURES)/org/apache/lucene/analysis/icu/utr30.dat: $(ICURES)/org/apache/lucene/analysis/icu/utr30.nrm
 	rm -f $@
 	cd $(dir $<); $(ICUPKG) --type $(ENDIANNESS) --add $(notdir $<) new $(notdir $@)
 
@@ -283,44 +317,37 @@ resources:
 endif
 
 GENERATE=$(JCC) $(foreach jar,$(JARS),--jar $(jar)) \
-           $(JCCFLAGS) \
+           $(JCCFLAGS) --use_full_names \
+           --include $(MISC_JAR) \
+           --include $(ANTLR_JAR) \
+           --include $(ASM_JAR) \
+           --include $(ASM_COMMONS_JAR) \
            --package java.lang java.lang.System \
                                java.lang.Runtime \
-                               java.lang.IllegalStateException \
-                               java.lang.IndexOutOfBoundsException \
            --package java.util java.util.Arrays \
+                               java.util.Collections \
                                java.util.HashMap \
                                java.util.HashSet \
+                               java.util.TreeSet \
+                               java.lang.IllegalStateException \
+                               java.lang.IndexOutOfBoundsException \
                                java.util.NoSuchElementException \
                      java.text.SimpleDateFormat \
                      java.text.DecimalFormat \
                      java.text.Collator \
+           --package java.util.concurrent java.util.concurrent.Executors \
            --package java.util.regex \
            --package java.io java.io.StringReader \
                              java.io.InputStreamReader \
                              java.io.FileInputStream \
-           --exclude org.apache.lucene.queryParser.Token \
-           --exclude org.apache.lucene.queryParser.TokenMgrError \
-           --exclude org.apache.lucene.queryParser.QueryParserTokenManager \
-           --exclude org.apache.lucene.queryParser.ParseException \
-           --exclude org.apache.lucene.queryParser.CharStream \
-           --exclude org.apache.lucene.search.regex.JakartaRegexpCapabilities \
+                             java.io.DataInputStream \
+           --exclude org.apache.lucene.sandbox.queries.regex.JakartaRegexpCapabilities \
            --exclude org.apache.regexp.RegexpTunnel \
-           --exclude org.apache.lucene.analysis.cn.smart.AnalyzerProfile \
            --python lucene \
            --mapping org.apache.lucene.document.Document 'get:(Ljava/lang/String;)Ljava/lang/String;' \
            --mapping java.util.Properties 'getProperty:(Ljava/lang/String;)Ljava/lang/String;' \
            --sequence java.util.AbstractList 'size:()I' 'get:(I)Ljava/lang/Object;' \
-           --rename org.apache.lucene.search.highlight.SpanScorer=HighlighterSpanScorer \
-           --rename org.apache.lucene.search.highlight.Scorer=HighlighterScorer \
-           --rename org.apache.lucene.search.spell.Dictionary=SpellDictionary \
-           --rename org.apache.lucene.search.suggest.fst.Sort=SuggestSort \
-           --rename org.apache.lucene.store.DataInput=StoreDataInput \
-           --rename org.apache.lucene.store.DataOutput=StoreDataOutput \
-           --rename org.tartarus.snowball.ext.DutchStemmer=DutchPorterStemmer \
-           --rename org.tartarus.snowball.ext.FrenchStemmer=FrenchPorterStemmer \
-           --rename org.tartarus.snowball.ext.GermanStemmer=GermanPorterStemmer \
-           --rename org.tartarus.snowball.ext.PortugueseStemmer=PortuguesePorterStemmer \
+           org.apache.lucene.index.IndexWriter:getReader \
            --version $(LUCENE_VER) \
            --module python/collections.py \
            --module python/ICUNormalizer2Filter.py \
@@ -352,8 +379,8 @@ clean:
 	rm -rf $(LUCENE)/build build
 
 realclean:
-	if test ! -d $(LUCENE)/.svn; then rm -rf $(LUCENE_SRC); else rm -rf $(LUCENE)/build; fi
-	rm -rf build samples/LuceneInAction/index samples/LuceneInAction/indexes
+	if test ! -d $(LUCENE_SRC)/.svn; then rm -rf $(LUCENE_SRC) lucene.egg-info; else rm -rf $(LUCENE)/build; fi
+	rm -rf build
 
 OS=$(shell uname)
 BUILD_TEST:=$(PYLUCENE)/build/test
@@ -370,38 +397,25 @@ install-test:
 	mkdir -p $(BUILD_TEST)
 	PYTHONPATH=$(BUILD_TEST) $(GENERATE) --install $(DEBUG_OPT) --install-dir $(BUILD_TEST)
 
-samples/LuceneInAction/index:
-	cd samples/LuceneInAction; PYTHONPATH=$(BUILD_TEST) $(PYTHON) index.py
-
-test: install-test samples/LuceneInAction/index
+test: install-test
 	find test -name 'test_*.py' | PYTHONPATH=$(BUILD_TEST) xargs -t -n 1 $(PYTHON)
-	ls samples/LuceneInAction/*Test.py | PYTHONPATH=$(BUILD_TEST) xargs -t -n 1 $(PYTHON)
-	PYTHONPATH=$(BUILD_TEST) $(PYTHON) samples/LuceneInAction/AnalyzerDemo.py
-	PYTHONPATH=$(BUILD_TEST) $(PYTHON) samples/LuceneInAction/AnalyzerUtils.py
-	PYTHONPATH=$(BUILD_TEST) $(PYTHON) samples/LuceneInAction/BooksLikeThis.py
-	PYTHONPATH=$(BUILD_TEST) $(PYTHON) samples/LuceneInAction/Explainer.py samples/LuceneInAction/index programming
-	PYTHONPATH=$(BUILD_TEST) $(PYTHON) samples/LuceneInAction/HighlightIt.py
-	PYTHONPATH=$(BUILD_TEST) $(PYTHON) samples/LuceneInAction/SortingExample.py
-	PYTHONPATH=$(BUILD_TEST) $(PYTHON) samples/LuceneInAction/SynonymAnalyzerViewer.py
-
 
 ARCHIVE=pylucene-$(VERSION)-src.tar.gz
 
 distrib:
 	mkdir -p distrib
-	svn export . distrib/pylucene-$(VERSION)
+	svn export --force . distrib/pylucene-$(VERSION)
 	tar -cf - --exclude build $(LUCENE_SRC) | tar -C distrib/pylucene-$(VERSION) -xvf -
-	cd distrib; tar -cvzf $(ARCHIVE) pylucene-$(VERSION)
+	cd distrib; tar --disable-copyfile -cvzf $(ARCHIVE) pylucene-$(VERSION)
 	cd distrib; gpg2 --armor --output $(ARCHIVE).asc --detach-sig $(ARCHIVE)
-	cd distrib; openssl md5 < $(ARCHIVE) > $(ARCHIVE).md5
+	cd distrib; md5sum $(ARCHIVE) > $(ARCHIVE).md5
 
 stage:
 	cd distrib; scp -p $(ARCHIVE) $(ARCHIVE).asc $(ARCHIVE).md5 \
                            people.apache.org:public_html/staging_area
 
 release:
-	cd distrib; scp -p $(ARCHIVE) $(ARCHIVE).asc $(ARCHIVE).md5 \
-                           people.apache.org:/www/www.apache.org/dist/lucene/pylucene
+	cd distrib; cp -p $(ARCHIVE) $(ARCHIVE).asc $(ARCHIVE).md5 ../../dist/pylucene/
 
 print-%:
 	@echo $* = $($*)
