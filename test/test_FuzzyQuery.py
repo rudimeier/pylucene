@@ -13,7 +13,7 @@
 # ====================================================================
 
 import sys, lucene, unittest
-from itertools import izip
+
 from lucene import JavaError
 from PyLuceneTestCase import PyLuceneTestCase
 
@@ -87,7 +87,7 @@ class FuzzyQueryTestCase(PyLuceneTestCase):
         self.assertEqual(3, len(hits), "3 documents should match")
 
         order = ("bbbbb", "abbbb", "aabbb")
-        for hit, o in izip(hits, order):
+        for hit, o in zip(hits, order):
             term = searcher.doc(hit.doc).get("field")
             self.assertEqual(o, term)
 
@@ -99,7 +99,7 @@ class FuzzyQueryTestCase(PyLuceneTestCase):
         hits = searcher.search(query, None, 1000).scoreDocs
         self.assertEqual(2, len(hits), "only 2 documents should match");
         order = ("bbbbb","abbbb")
-        for hit, o in izip(hits, order):
+        for hit, o in zip(hits, order):
             term = searcher.doc(hit.doc).get("field")
             self.assertEqual(o, term)
 
@@ -347,7 +347,7 @@ class FuzzyQueryTestCase(PyLuceneTestCase):
         try:
             q = FuzzyQuery(Term("field", "t"), 3)
             self.fail()
-        except JavaError, e:
+        except JavaError as e:
             #expected
             pass
   

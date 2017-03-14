@@ -65,7 +65,7 @@ class DocBoostTestCase(PyLuceneTestCase):
     
         lastScore = 0.0
         for score in scores:
-            self.assert_(score > lastScore)
+            self.assertTrue(score > lastScore)
             lastScore = score
 
 

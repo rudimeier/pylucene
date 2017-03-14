@@ -49,7 +49,7 @@ MASKS = {8: " & 0xFFL", 16: " & 0xFFFFL", 32: " & 0xFFFFFFFFL", 64: ""}
 CASTS = {8: "(byte) ", 16: "(short) ", 32: "(int) ", 64: ""}
 
 if __name__ == '__main__':
-  for bpv in TYPES.keys():
+  for bpv in list(TYPES.keys()):
     type
     f = open("Direct%d.java" %bpv, 'w')
     f.write(HEADER)

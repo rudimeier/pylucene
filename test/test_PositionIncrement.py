@@ -194,7 +194,7 @@ class PositionIncrementTestCase(PyLuceneTestCase):
                                               "content", BytesRef("a"))
 
         count = 0
-        self.assert_(tp.nextDoc() != tp.NO_MORE_DOCS)
+        self.assertTrue(tp.nextDoc() != tp.NO_MORE_DOCS)
         # "a" occurs 4 times
         self.assertEqual(4, tp.freq())
 
@@ -205,7 +205,7 @@ class PositionIncrementTestCase(PyLuceneTestCase):
         self.assertEqual(6, tp.nextPosition())
 
         # only one doc has "a"
-        self.assert_(tp.nextDoc() == tp.NO_MORE_DOCS)
+        self.assertTrue(tp.nextDoc() == tp.NO_MORE_DOCS)
 
         searcher = self.getSearcher(reader=reader)
     
@@ -217,27 +217,27 @@ class PositionIncrementTestCase(PyLuceneTestCase):
         count = 0
         sawZero = False
         pspans = MultiSpansWrapper.wrap(searcher.getTopReaderContext(), snq)
-        while pspans.next():
+        while next(pspans):
             payloads = pspans.getPayload()
             sawZero |= pspans.start() == 0
 
             it = payloads.iterator()
             while it.hasNext():
                 count += 1
-                it.next()
+                next(it)
 
         self.assertEqual(5, count)
-        self.assert_(sawZero)
+        self.assertTrue(sawZero)
 
         spans = MultiSpansWrapper.wrap(searcher.getTopReaderContext(), snq)
         count = 0
         sawZero = False
-        while spans.next():
+        while next(spans):
             count += 1
             sawZero |= spans.start() == 0
 
         self.assertEqual(4, count)
-        self.assert_(sawZero)
+        self.assertTrue(sawZero)
 		
         sawZero = False
         psu = PayloadSpanUtil(searcher.getTopReaderContext())
@@ -245,12 +245,12 @@ class PositionIncrementTestCase(PyLuceneTestCase):
         count = pls.size()
         it = pls.iterator()
         while it.hasNext():
-            bytes = JArray('byte').cast_(it.next())
+            bytes = JArray('byte').cast_(next(it))
             s = bytes.string_
             sawZero |= s == "pos: 0"
 
         self.assertEqual(5, count)
-        self.assert_(sawZero)
+        self.assertTrue(sawZero)
 
 
 class StopWhitespaceAnalyzer(PythonAnalyzer):

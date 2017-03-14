@@ -62,8 +62,8 @@ class BaseTokenStreamTestCase(TestCase):
 
         #checkClearAtt = ts.addAttribute(PythonAttribute.class_);
 
-        self.assert_(output is not None)
-        self.assert_(ts.hasAttribute(CharTermAttribute.class_),
+        self.assertTrue(output is not None)
+        self.assertTrue(ts.hasAttribute(CharTermAttribute.class_),
                                      "has no CharTermAttribute")
 
         termAtt = ts.getAttribute(CharTermAttribute.class_)
@@ -72,24 +72,24 @@ class BaseTokenStreamTestCase(TestCase):
         if (startOffsets is not None or
             endOffsets is not None or
             finalOffset is not None):
-            self.assert_(ts.hasAttribute(OffsetAttribute.class_),
+            self.assertTrue(ts.hasAttribute(OffsetAttribute.class_),
                                          "has no OffsetAttribute")
             offsetAtt = ts.getAttribute(OffsetAttribute.class_)
     
         typeAtt = None
         if types is not None:
-            self.assert_(ts.hasAttribute(TypeAttribute.class_),
+            self.assertTrue(ts.hasAttribute(TypeAttribute.class_),
                          "has no TypeAttribute")
             typeAtt = ts.getAttribute(TypeAttribute.class_)
     
         posIncrAtt = None
         if posIncrements is not None:
-            self.assert_(ts.hasAttribute(PositionIncrementAttribute.class_),
+            self.assertTrue(ts.hasAttribute(PositionIncrementAttribute.class_),
                          "has no PositionIncrementAttribute")
             posIncrAtt = ts.getAttribute(PositionIncrementAttribute.class_)
     
         ts.reset()
-        for i in xrange(len(output)):
+        for i in range(len(output)):
             # extra safety to enforce, that the state is not preserved and
             # also assign bogus values
             ts.clearAttributes()
@@ -101,7 +101,7 @@ class BaseTokenStreamTestCase(TestCase):
             if posIncrAtt is not None:
                 posIncrAtt.setPositionIncrement(45987657)
 
-            self.assert_(ts.incrementToken(), "token %d exists" %(i))
+            self.assertTrue(ts.incrementToken(), "token %d exists" %(i))
             self.assertEqual(output[i], termAtt.toString(), "term %d" %(i))
             if startOffsets is not None:
                 self.assertEqual(startOffsets[i], offsetAtt.startOffset(),
@@ -116,7 +116,7 @@ class BaseTokenStreamTestCase(TestCase):
                                  posIncrAtt.getPositionIncrement(),
                                  "posIncrement %d" %(i))
 
-        self.assert_(not ts.incrementToken(), "end of stream")
+        self.assertTrue(not ts.incrementToken(), "end of stream")
         ts.end()
         ts.close()
 

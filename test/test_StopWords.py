@@ -37,7 +37,7 @@ class StopWordsTestCase(unittest.TestCase):
         try:
             result = StandardTokenizer(Version.LUCENE_CURRENT, self.reader)
             result = StopFilter(Version.LUCENE_CURRENT, result, self.stop_set)
-        except Exception, e:
+        except Exception as e:
             self.fail(str(e))
 
 

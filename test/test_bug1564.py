@@ -30,7 +30,7 @@ class Test_Bug1564(PyLuceneTestCase):
         writer = self.getWriter(analyzer=self.analyzer)
 
         doc = Document()
-        doc.add(Field('all', u'windowpane beplaster rapacious \
+        doc.add(Field('all', 'windowpane beplaster rapacious \
         catatonia gauntlet wynn depressible swede pick dressmake supreme \
         jeremy plumb theoretic bureaucracy causation chartres equipoise \
         dispersible careen heard', TextField.TYPE_NOT_STORED))

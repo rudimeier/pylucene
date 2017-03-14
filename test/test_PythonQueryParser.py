@@ -47,7 +47,7 @@ class PythonQueryParserTestCase(PyLuceneTestCase):
                              StandardAnalyzer(Version.LUCENE_CURRENT))
 
         q = qp.parse("foo bar")
-        self.assertEquals(str(q), "all:foo all:bar all:extra_clause")
+        self.assertEqual(str(q), "all:foo all:bar all:extra_clause")
 
 
 class PythonMultiFieldQueryParserTestCase(PyLuceneTestCase):
@@ -63,7 +63,7 @@ class PythonMultiFieldQueryParserTestCase(PyLuceneTestCase):
         q = qp.parse(Version.LUCENE_CURRENT, "foo bar", ['one', 'two'],
                      [BooleanClause.Occur.SHOULD, BooleanClause.Occur.SHOULD],
                      StandardAnalyzer(Version.LUCENE_CURRENT))
-        self.assertEquals(str(q), "(one:foo one:bar) (two:foo two:bar)")
+        self.assertEqual(str(q), "(one:foo one:bar) (two:foo two:bar)")
 
 
 if __name__ == "__main__":

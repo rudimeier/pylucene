@@ -40,7 +40,7 @@ class QueryRewriteTest(PyLuceneTestCase):
         base_query = TermQuery(self.term)
         new_query = base_query.rewrite(self.reader)
 
-        self.assertEquals(base_query, new_query)
+        self.assertEqual(base_query, new_query)
     
 
 if __name__ == "__main__":

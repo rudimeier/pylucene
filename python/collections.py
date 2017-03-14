@@ -76,16 +76,16 @@ class JavaSet(PythonSet):
                 if hasattr(_self, '_next'):
                     return True
                 try:
-                    _self._next = _self._iterator.next()
+                    _self._next = next(_self._iterator)
                     return True
                 except StopIteration:
                     return False
-            def next(_self):
+            def __next__(_self):
                 if hasattr(_self, '_next'):
                     next = _self._next
                     del _self._next
                 else:
-                    next = _self._iterator.next()
+                    next = next(_self._iterator)
                 return next
         return _iterator()
 
@@ -132,9 +132,9 @@ class JavaListIterator(PythonListIterator):
         self._lastIndex = -1 # keep state for remove/set
         self.index = index
 
-    def next(self):
+    def __next__(self):
         if self.index >= len(self._lst):
-            raise JavaError, NoSuchElementException(str(self.index))
+            raise JavaError(NoSuchElementException(str(self.index)))
         result = self._lst[self.index]
         self._lastIndex = self.index
         self.index += 1
@@ -142,7 +142,7 @@ class JavaListIterator(PythonListIterator):
 
     def previous(self):
         if self.index <= 0:
-            raise JavaError, NoSuchElementException(str(self.index - 1))
+            raise JavaError(NoSuchElementException(str(self.index - 1)))
         self.index -= 1
         self._lastIndex = self.index
         return self._lst[self.index]
@@ -167,7 +167,7 @@ class JavaListIterator(PythonListIterator):
         element that would be returned by previous, if any.
         """
         if self._lastIndex < 0:
-            raise JavaError, IllegalStateException("add")
+            raise JavaError(IllegalStateException("add"))
         self._lst.insert(self.index, element)
         self.index += 1
         self._lastIndex = -1 # invalidate state
@@ -178,7 +178,7 @@ class JavaListIterator(PythonListIterator):
         was returned by next or previous.
         """
         if self._lastIndex < 0:
-            raise JavaError, IllegalStateException("remove")
+            raise JavaError(IllegalStateException("remove"))
         del self._lst[self._lastIndex]
         self._lastIndex = -1 # invalidate state
 
@@ -188,7 +188,7 @@ class JavaListIterator(PythonListIterator):
         with the specified element.
         """
         if self._lastIndex < 0:
-            raise JavaError, IllegalStateException("set")
+            raise JavaError(IllegalStateException("set"))
         self._lst[self._lastIndex] = element
 
     def __iter__(self):
@@ -245,7 +245,7 @@ class JavaList(PythonList):
 
     def get(self, index):
         if index < 0 or index >= self.size():
-            raise JavaError, IndexOutOfBoundsException(str(index))
+            raise JavaError(IndexOutOfBoundsException(str(index)))
         return self._lst[index]
 
     def indexOf(self, obj):
@@ -266,16 +266,16 @@ class JavaList(PythonList):
                 if hasattr(_self, '_next'):
                     return True
                 try:
-                    _self._next = _self._iterator.next()
+                    _self._next = next(_self._iterator)
                     return True
                 except StopIteration:
                     return False
-            def next(_self):
+            def __next__(_self):
                 if hasattr(_self, '_next'):
                     next = _self._next
                     del _self._next
                 else:
-                    next = _self._iterator.next()
+                    next = next(_self._iterator)
                 return next
         return _iterator()
 
@@ -352,5 +352,5 @@ class JavaList(PythonList):
 
     def set(self, index, obj):
         if index < 0 or index >= self.size():
-            raise JavaError, IndexOutOfBoundsException(str(index))
+            raise JavaError(IndexOutOfBoundsException(str(index)))
         self._lst[index] = obj

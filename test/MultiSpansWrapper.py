@@ -49,7 +49,7 @@ class MultiSpansWrapper(PythonSpans):
 
       return MultiSpansWrapper(leaves, query, termContexts)
 
-  def next(self):
+  def __next__(self):
 
       if self.leafOrd >= self.numLeaves:
           return False
@@ -60,7 +60,7 @@ class MultiSpansWrapper(PythonSpans):
                                              self.termContexts)
 
       while True:
-          if self.current.next():
+          if next(self.current):
               return True
 
           self.leafOrd += 1
@@ -136,4 +136,4 @@ class MultiSpansWrapper(PythonSpans):
       return self.current.isPayloadAvailable()
 
   def cost(self):
-      return sys.maxint
+      return sys.maxsize

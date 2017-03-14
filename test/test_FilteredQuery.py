@@ -76,7 +76,7 @@ class FilteredQueryTestCase(PyLuceneTestCase):
                     bitset.set(3)
                 return DocIdBitSet(bitset)
 
-        self.filter = filter()
+        self.filter = list(filter())
 
     def testFilteredQuery(self):
 

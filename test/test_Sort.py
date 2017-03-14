@@ -15,7 +15,7 @@
 import sys, lucene, unittest, math
 from PyLuceneTestCase import PyLuceneTestCase
 
-from itertools import izip
+
 from random import randint
 
 from java.lang import Byte, Double, Float, Integer, Long, Short
@@ -55,15 +55,15 @@ class SortTestCase(PyLuceneTestCase):
 
         self.data = [
             # tracer  contents         int            float           string   custom   i18n               long            double,          short,     byte, 'custom parser encoding'
-            [ "A",   "x a",           "5",           "4f",           "c",     "A-3",   "p\u00EAche",      "10",           "-4.0",            "3",    "126", "J" ],  # A, x
+            [ "A",   "x a",           "5",           "4f",           "c",     "A-3",   "p\\u00EAche",      "10",           "-4.0",            "3",    "126", "J" ],  # A, x
             [ "B",   "y a",           "5",           "3.4028235E38", "i",     "B-10",  "HAT",             "1000000000",   "40.0",           "24",      "1", "I" ],  # B, y
-            [ "C",   "x a b c",       "2147483647",  "1.0",          "j",     "A-2",   "p\u00E9ch\u00E9", "99999999","40.00002343",        "125",     "15", "H" ],  # C, x
+            [ "C",   "x a b c",       "2147483647",  "1.0",          "j",     "A-2",   "p\\u00E9ch\\u00E9", "99999999","40.00002343",        "125",     "15", "H" ],  # C, x
             [ "D",   "y a b c",       "-1",          "0.0f",         "a",     "C-0",   "HUT",   str(Long.MAX_VALUE), str(Double.MIN_VALUE), str(Short.MIN_VALUE), str(Byte.MIN_VALUE), "G" ], # D, y
             [ "E",   "x a b c d",     "5",           "2f",           "h",     "B-8",   "peach", str(Long.MIN_VALUE), str(Double.MAX_VALUE), str(Short.MAX_VALUE), str(Byte.MAX_VALUE), "F" ], # E, x
-            [ "F",   "y a b c d",     "2",           "3.14159f",     "g",     "B-1",   "H\u00C5T",        "-44",          "343.034435444",  "-3",      "0", "E" ],  # F, y
+            [ "F",   "y a b c d",     "2",           "3.14159f",     "g",     "B-1",   "H\\u00C5T",        "-44",          "343.034435444",  "-3",      "0", "E" ],  # F, y
             [ "G",   "x a b c d",     "3",           "-1.0",         "f",     "C-100", "sin",             "323254543543", "4.043544",        "5",    "100", "D" ],  # G, x
-            [ "H",   "y a b c d",     "0",           "1.4E-45",      "e",     "C-88",  "H\u00D8T",        "1023423423005","4.043545",       "10",    "-50", "C" ],  # H, y
-            [ "I",   "x a b c d e f", "-2147483648", "1.0e+0",       "d",     "A-10",  "s\u00EDn",        "332422459999", "4.043546",     "-340",     "51", "B" ],  # I, x
+            [ "H",   "y a b c d",     "0",           "1.4E-45",      "e",     "C-88",  "H\\u00D8T",        "1023423423005","4.043545",       "10",    "-50", "C" ],  # H, y
+            [ "I",   "x a b c d e f", "-2147483648", "1.0e+0",       "d",     "A-10",  "s\\u00EDn",        "332422459999", "4.043546",     "-340",     "51", "B" ],  # I, x
             [ "J",   "y a b c d e f", "4",           ".5",           "b",     "C-7",   "HOT",             "34334543543",  "4.0000220343",  "300",      "2", "A" ],  # J, y
             [ "W",   "g",             "1",           None,           None,    None,    None,              None,           None,             None,     None, None ],
             [ "X",   "g",             "1",           "0.1",          None,    None,    None,              None,           None,             None,     None, None ],
@@ -134,7 +134,7 @@ class SortTestCase(PyLuceneTestCase):
         ft2 = FieldType()
         ft2.setIndexed(True)
 
-        for i in xrange(len(self.data)):
+        for i in range(len(self.data)):
             if (i % 2 == 0 and even) or (i % 2 == 1 and odd):
                 doc = Document()
                 doc.add(Field("tracer", self.data[i][0], ft1))
@@ -205,7 +205,7 @@ class SortTestCase(PyLuceneTestCase):
         fixedLen = self.getRandomNumber(2, 8)
         fixedLen2 = self.getRandomNumber(1, 4)
 
-        for i in xrange(NUM_STRINGS):
+        for i in range(NUM_STRINGS):
             doc = Document()
 
             num = self.getRandomCharString(self.getRandomNumber(2, 8), 48, 52)
@@ -258,7 +258,7 @@ class SortTestCase(PyLuceneTestCase):
   
     def getRandomNumberString(self, num, low, high):
 
-        return ''.join([self.getRandomNumber(low, high) for i in xrange(num)])
+        return ''.join([self.getRandomNumber(low, high) for i in range(num)])
   
     def getRandomCharString(self, num):
 
@@ -267,7 +267,7 @@ class SortTestCase(PyLuceneTestCase):
     def getRandomCharString(self, num,  start, end):
         
         return ''.join([chr(self.getRandomNumber(start, end))
-                        for i in xrange(num)])
+                        for i in range(num)])
   
     def getRandomNumber(self, low, high):
   
@@ -393,34 +393,34 @@ class SortTestCase(PyLuceneTestCase):
             doc2 = searcher.doc(scoreDoc.doc)
             v = doc2.getValues("tracer" + fieldSuffix)
             v2 = doc2.getValues("tracer2" + fieldSuffix)
-            for _v, _v2 in izip(v, v2):
+            for _v, _v2 in zip(v, v2):
                 buff.append(_v + "(" + _v2 + ")(" + str(scoreDoc.doc) + ")\n")
                 if last is not None:
                     _cmp = cmp(_v, last)
                     if _cmp < 0: # ensure first field is in order
                         fail = True
-                        print "fail:", _v, "<", last
+                        print("fail:", _v, "<", last)
                         buff.append("  WRONG tracer\n")
 
                     if _cmp == 0: # ensure second field is in reverse order
                         _cmp = cmp(_v2, lastSub)
                         if _cmp > 0:
                             fail = True
-                            print "rev field fail:", _v2, ">", lastSub
+                            print("rev field fail:", _v2, ">", lastSub)
                             buff.append("  WRONG tracer2\n")
                         elif _cmp == 0: # ensure docid is in order
                             if scoreDoc.doc < lastDocId:
                                 fail = True
-                                print "doc fail:", scoreDoc.doc, ">", lastDocId
+                                print("doc fail:", scoreDoc.doc, ">", lastDocId)
                                 buff.append("  WRONG docID\n")
                 last = _v
                 lastSub = _v2
                 lastDocId = scoreDoc.doc
 
         if fail:
-            print "topn field1(field2)(docID):", ''.join(buff)
+            print("topn field1(field2)(docID):", ''.join(buff))
 
-        self.assert_(not fail, "Found sort results out of order")
+        self.assertTrue(not fail, "Found sort results out of order")
         searcher.getIndexReader().close()
   
     def testStringSort(self):
@@ -483,7 +483,7 @@ class SortTestCase(PyLuceneTestCase):
 
         class longParser(PythonLongParser):
             def parseLong(_self, val):
-                return (val.bytes[val.offset] - ord('A')) * 1234567890L
+                return (val.bytes[val.offset] - ord('A')) * 1234567890
             def termsEnum(_self, terms):
                 return terms.iterator(None)
 
@@ -701,7 +701,7 @@ class SortTestCase(PyLuceneTestCase):
         self._assertMatches(parallelSearcher, self.queryG, sort, "ZYXW")
 
         threadPool.shutdown()
-        threadPool.awaitTermination(1000L, TimeUnit.MILLISECONDS)
+        threadPool.awaitTermination(1000, TimeUnit.MILLISECONDS)
 
     def testSortCombos(self):
         """
@@ -745,7 +745,7 @@ class SortTestCase(PyLuceneTestCase):
         self._runMultiSorts(searcher, False)
 
         threadPool.shutdown();
-        threadPool.awaitTermination(1000L, TimeUnit.MILLISECONDS);
+        threadPool.awaitTermination(1000, TimeUnit.MILLISECONDS);
 
     def testTopDocsScores(self):
         """
@@ -769,7 +769,7 @@ class SortTestCase(PyLuceneTestCase):
                 bs.set(docs1.scoreDocs[0].doc)
                 return DocIdBitSet(bs)
 
-        docs2 = self.full.search(self.queryE, filter(), nDocs, sort, True, True)
+        docs2 = self.full.search(self.queryE, list(filter()), nDocs, sort, True, True)
 
         self.assertEqual(docs1.scoreDocs[0].score,
                          docs2.scoreDocs[0].score,
@@ -792,8 +792,8 @@ class SortTestCase(PyLuceneTestCase):
             self.full.search(q, tdc)
       
             sds = tdc.topDocs().scoreDocs
-            for i in xrange(1, len(sds)):
-                self.assert_(sds[i].doc != sds[i - 1].doc)
+            for i in range(1, len(sds)):
+                self.assertTrue(sds[i].doc != sds[i - 1].doc)
 
     def testSortWithoutScoreTracking(self):
         """
@@ -811,9 +811,9 @@ class SortTestCase(PyLuceneTestCase):
             tds = tdc.topDocs()
             sds = tds.scoreDocs
             for sd in sds:
-                self.assert_(Float.isNaN_(sd.score))
+                self.assertTrue(Float.isNaN_(sd.score))
 
-            self.assert_(Float.isNaN_(tds.getMaxScore()))
+            self.assertTrue(Float.isNaN_(tds.getMaxScore()))
 
     def testSortWithScoreNoMaxScoreTracking(self):
         """
@@ -831,9 +831,9 @@ class SortTestCase(PyLuceneTestCase):
             tds = tdc.topDocs()
             sds = tds.scoreDocs
             for sd in sds:
-                self.assert_(not Float.isNaN_(sd.score))
+                self.assertTrue(not Float.isNaN_(sd.score))
 
-            self.assert_(Float.isNaN_(tds.getMaxScore()))
+            self.assertTrue(Float.isNaN_(tds.getMaxScore()))
   
     def testSortWithScoreAndMaxScoreTracking(self):
         """
@@ -851,9 +851,9 @@ class SortTestCase(PyLuceneTestCase):
             tds = tdc.topDocs()
             sds = tds.scoreDocs
             for sd in sds:
-                self.assert_(not Float.isNaN_(sd.score))
+                self.assertTrue(not Float.isNaN_(sd.score))
 
-            self.assert_(not Float.isNaN_(tds.getMaxScore()))
+            self.assertTrue(not Float.isNaN_(tds.getMaxScore()))
 
     def testOutOfOrderDocsScoringSort(self):
         """
@@ -893,13 +893,13 @@ class SortTestCase(PyLuceneTestCase):
         bq.setMinimumNumberShouldMatch(1)
 
         for sort in sorts:
-            for tfcOption, actualTFCClass in izip(tfcOptions,
+            for tfcOption, actualTFCClass in zip(tfcOptions,
                                                   actualTFCClasses):
                 tdc = TopFieldCollector.create(sort, 10, tfcOption[0],
                                                tfcOption[1], tfcOption[2],
                                                False)
 
-                self.assert_(tdc.getClass().getName().endswith("$" + actualTFCClass))
+                self.assertTrue(tdc.getClass().getName().endswith("$" + actualTFCClass))
           
                 self.full.search(bq, tdc)
           
@@ -917,7 +917,7 @@ class SortTestCase(PyLuceneTestCase):
             tdc = TopFieldCollector.create(sort, 10, True, True, True, True)
             tds = tdc.topDocs()
             self.assertEqual(0, tds.totalHits)
-            self.assert_(Float.isNaN_(tds.getMaxScore()))
+            self.assertTrue(Float.isNaN_(tds.getMaxScore()))
   
     def _runMultiSorts(self, multi, isFull):
         """
@@ -1076,9 +1076,9 @@ class SortTestCase(PyLuceneTestCase):
         make sure all the values in the maps match
         """
 
-        self.assertEquals(len(m1), len(m2))
-        for key in m1.iterkeys():
-            self.assertEquals(m1[key], m2[key], 1e-6)
+        self.assertEqual(len(m1), len(m2))
+        for key in m1.keys():
+            self.assertEqual(m1[key], m2[key], 1e-6)
 
     def getName(self):
 
@@ -1090,7 +1090,7 @@ class SortTestCase(PyLuceneTestCase):
 
         insanity = FieldCacheSanityChecker.checkSanity(entries)
         if insanity:
-            print [x for x in insanity]
+            print([x for x in insanity])
         self.assertEqual(0, len(insanity),
                          msg + ": Insane FieldCache usage(s) found")
 
