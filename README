@@ -1,2 +1,7 @@
+All *-py3 branches in this repository need the jcc package for python3
+from here: https://github.com/rudimeier/jcc
 
-Please see http://lucene.apache.org/pylucene/features.html
+Don't use the included jcc direcory!
+
+Also see the original home page:
+   http://lucene.apache.org/pylucene/features.html
