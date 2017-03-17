@@ -39,7 +39,15 @@ function travis_jdk_switcher
 	fi
 }
 
-function travis_install_script
+function install_deps_osx
+{
+	brew update >/dev/null
+	brew install \
+		ant \
+		|| return
+}
+
+function install_deps_linux
 {
 	# installing jcc requires not too old setuptools
 	pip install --upgrade setuptools || return
@@ -49,6 +57,14 @@ function travis_install_script
 	popd
 }
 
+function travis_install_script
+{
+	if [ "$TRAVIS_OS_NAME" = "osx" ]; then
+		install_deps_osx || return
+	else
+		install_deps_linux || return
+	fi
+}
 
 function travis_build
 {
