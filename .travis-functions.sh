@@ -56,6 +56,7 @@ function travis_build
 	java -version
 
 	make
+	make test
 }
 
 function travis_script
