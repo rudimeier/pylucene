@@ -46,14 +46,13 @@ function install_deps_osx
 	pushd /tmp/cleandir || return
 
 	brew update >/dev/null
-	brew install \
-		ant \
-		python3 \
-		|| return
+	brew install ant || return
 
+	brew install python3 || return
 	mkdir ~/bin || return
 	ln -s $(which python3) $HOME/bin/python || return
 	ln -s $(which python3) $HOME/bin/pip || return
+	hash -r
 
 	popd
 }
