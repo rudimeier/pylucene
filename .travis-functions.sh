@@ -42,14 +42,13 @@ function travis_jdk_switcher
 function install_deps_osx
 {
 	brew update >/dev/null
-	brew install \
-		ant \
-		python3 \
-		|| return
+	brew install ant || return
 
-	mkdir ~/bin
-	ln -s $(which python3) $HOME/bin/python
-	ln -s $(which python3) $HOME/bin/pip
+	brew install python3 || return
+	mkdir ~/bin || return
+	ln -s $(which python3) $HOME/bin/python || return
+	ln -s $(which pip3) $HOME/bin/pip || return
+	hash -r
 }
 
 function install_deps_linux
@@ -75,11 +74,11 @@ function travis_install_script
 
 function travis_build
 {
-	python --version
-	java -version
+	python --version || return
+	java -version || return
 
-	make
-	make test
+	make || return
+	make test || return
 }
 
 function travis_script
