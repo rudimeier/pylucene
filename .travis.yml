@@ -24,11 +24,11 @@ matrix:
 #      osx_image: xcode7.3
 #      python: "dflt"
 #      env: TESTJDK="OSX 10.11 default"
-#    - language: java
-#      os: osx
-#      osx_image: xcode8.2
-#      python: "dflt"
-#      env: TESTJDK="OSX 10.12 default"
+    - language: java
+      os: osx
+      osx_image: xcode8.2
+      python: "dflt"
+      env: TESTJDK="OSX 10.12 default"
 
 install:
   - source ./.travis-functions.sh
