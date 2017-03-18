@@ -49,12 +49,7 @@ function install_deps_osx
 
 function install_deps_linux
 {
-	# installing jcc requires not too old setuptools
-	pip install --upgrade setuptools || return
-	git clone --quiet git://github.com/rudimeier/jcc.git ~/builds/jcc || return
-	pushd ~/builds/jcc || return
-	JCC_JDK="$JAVA_HOME" python setup.py install || return
-	popd
+	true
 }
 
 function travis_install_script
@@ -64,6 +59,13 @@ function travis_install_script
 	else
 		install_deps_linux || return
 	fi
+
+	# installing jcc requires not too old setuptools
+	pip install --upgrade setuptools || return
+	git clone --quiet git://github.com/rudimeier/jcc.git ~/builds/jcc || return
+	pushd ~/builds/jcc || return
+	JCC_JDK="$JAVA_HOME" python setup.py install || return
+	popd
 }
 
 function travis_build
@@ -72,6 +74,7 @@ function travis_build
 	java -version
 
 	make
+	make test
 }
 
 function travis_script
