@@ -81,11 +81,11 @@ function travis_install_script
 
 function travis_build
 {
-	python --version
-	java -version
+	python --version || return
+	java -version || return
 
-	make
-	make test
+	make || return
+	make test || return
 }
 
 function travis_script
