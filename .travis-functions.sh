@@ -47,6 +47,7 @@ function install_deps_osx
 		python3 \
 		|| return
 
+	mkdir ~/bin
 	ln -s $(which python3) $HOME/bin/python
 	ln -s $(which python3) $HOME/bin/pip
 }
