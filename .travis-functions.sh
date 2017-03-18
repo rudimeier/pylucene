@@ -41,6 +41,10 @@ function travis_jdk_switcher
 
 function install_deps_osx
 {
+	# stupid python seems do import whatever from current path ...
+	mkdir /tmp/cleandir
+	pushd /tmp/cleandir
+
 	brew update >/dev/null
 	brew install \
 		ant \
@@ -50,6 +54,8 @@ function install_deps_osx
 	mkdir ~/bin
 	ln -s $(which python3) $HOME/bin/python
 	ln -s $(which python3) $HOME/bin/pip
+
+	popd
 }
 
 function install_deps_linux
