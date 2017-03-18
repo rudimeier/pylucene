@@ -47,7 +47,7 @@ function install_deps_osx
 	brew install python3 || return
 	mkdir ~/bin || return
 	ln -s $(which python3) $HOME/bin/python || return
-	ln -s $(which python3) $HOME/bin/pip || return
+	ln -s $(which pip3) $HOME/bin/pip || return
 	hash -r
 }
 
@@ -58,11 +58,6 @@ function install_deps_linux
 
 function travis_install_script
 {
-	# stupid python seems do import whatever from current path ...
-	mkdir /tmp/cleandir || return
-	pushd /tmp/cleandir || return
-
-
 	if [ "$TRAVIS_OS_NAME" = "osx" ]; then
 		install_deps_osx || return
 	else
@@ -74,8 +69,6 @@ function travis_install_script
 	git clone --quiet git://github.com/rudimeier/jcc.git ~/builds/jcc || return
 	pushd ~/builds/jcc || return
 	JCC_JDK="$JAVA_HOME" python setup.py install || return
-	popd
-
 	popd
 }
 
