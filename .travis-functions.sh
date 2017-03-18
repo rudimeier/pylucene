@@ -42,8 +42,8 @@ function travis_jdk_switcher
 function install_deps_osx
 {
 	# stupid python seems do import whatever from current path ...
-	mkdir /tmp/cleandir
-	pushd /tmp/cleandir
+	mkdir /tmp/cleandir || return
+	pushd /tmp/cleandir || return
 
 	brew update >/dev/null
 	brew install \
@@ -51,9 +51,9 @@ function install_deps_osx
 		python3 \
 		|| return
 
-	mkdir ~/bin
-	ln -s $(which python3) $HOME/bin/python
-	ln -s $(which python3) $HOME/bin/pip
+	mkdir ~/bin || return
+	ln -s $(which python3) $HOME/bin/python || return
+	ln -s $(which python3) $HOME/bin/pip || return
 
 	popd
 }
