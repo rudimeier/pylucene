@@ -41,10 +41,6 @@ function travis_jdk_switcher
 
 function install_deps_osx
 {
-	# stupid python seems do import whatever from current path ...
-	mkdir /tmp/cleandir || return
-	pushd /tmp/cleandir || return
-
 	brew update >/dev/null
 	brew install ant || return
 
@@ -53,8 +49,6 @@ function install_deps_osx
 	ln -s $(which python3) $HOME/bin/python || return
 	ln -s $(which python3) $HOME/bin/pip || return
 	hash -r
-
-	popd
 }
 
 function install_deps_linux
@@ -64,6 +58,11 @@ function install_deps_linux
 
 function travis_install_script
 {
+	# stupid python seems do import whatever from current path ...
+	mkdir /tmp/cleandir || return
+	pushd /tmp/cleandir || return
+
+
 	if [ "$TRAVIS_OS_NAME" = "osx" ]; then
 		install_deps_osx || return
 	else
@@ -75,6 +74,8 @@ function travis_install_script
 	git clone --quiet git://github.com/rudimeier/jcc.git ~/builds/jcc || return
 	pushd ~/builds/jcc || return
 	JCC_JDK="$JAVA_HOME" python setup.py install || return
+	popd
+
 	popd
 }
 
